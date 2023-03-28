@@ -26,13 +26,13 @@ const Navbar = () => {
   return (
     <Flex p='4'>
       <Text fontWeight='bold'>
-        <Link href='/'>the stream</Link>
+        <Link href='/' style={{ textDecoration: 'none' }}>the stream</Link>
       </Text>
       <HStack ml='auto'>
-        <Link onClick={toggleColorMode} fontStyle='italic' as='div'>
+        <Link onClick={toggleColorMode} fontStyle='italic' fontWeight='medium' as='div' style={{ textDecoration: 'none' }}>
           light/dark
         </Link>
-        <Link fontWeight='bold' ml='auto' onClick={onOpen}>
+        <Link fontWeight='bold' ml='auto' onClick={onOpen} style={{ textDecoration: 'none' }}>
           about
         </Link>
       </HStack>
@@ -41,7 +41,7 @@ const Navbar = () => {
         <ModalContent>
           <ModalHeader>About</ModalHeader>
           <ModalCloseButton />
-          <ModalBody mb='2'>
+          <ModalBody mb='4'>
             <Stack spacing='20px'>
               <Text>
                 The 'stream' provides a serene abode for me to articulate my
@@ -54,7 +54,7 @@ const Navbar = () => {
                 </Link>
                 .
               </Text>
-              <Text>
+              <Text fontWeight='semibold'>
                 Check out the code on GitHub:{' '}
                 <Link href='https://github.com/terror/stream' target='_blank'>
                   https://github.com/terror/stream
@@ -74,7 +74,7 @@ const Stream = () => {
       <Heading>Liam's stream</Heading>
       <Input
         placeholder='Search the stream...'
-        fontWeight='semibold'
+        fontWeight='medium'
         border='none'
         outline='none'
         background='#E2E8F0'
