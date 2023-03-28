@@ -26,13 +26,26 @@ const Navbar = () => {
   return (
     <Flex p='4'>
       <Text fontWeight='bold'>
-        <Link href='/' style={{ textDecoration: 'none' }}>the stream</Link>
+        <Link href='/' style={{ textDecoration: 'none' }}>
+          the stream
+        </Link>
       </Text>
       <HStack ml='auto'>
-        <Link onClick={toggleColorMode} fontStyle='italic' fontWeight='medium' as='div' style={{ textDecoration: 'none' }}>
+        <Link
+          onClick={toggleColorMode}
+          fontStyle='italic'
+          fontWeight='medium'
+          as='div'
+          style={{ textDecoration: 'none' }}
+        >
           light/dark
         </Link>
-        <Link fontWeight='bold' ml='auto' onClick={onOpen} style={{ textDecoration: 'none' }}>
+        <Link
+          fontWeight='bold'
+          ml='auto'
+          onClick={onOpen}
+          style={{ textDecoration: 'none' }}
+        >
           about
         </Link>
       </HStack>
@@ -43,7 +56,7 @@ const Navbar = () => {
           <ModalCloseButton />
           <ModalBody mb='4'>
             <Stack spacing='20px'>
-              <Text>
+              <Text fontWeight='medium'>
                 The 'stream' provides a serene abode for me to articulate my
                 thoughts, unencumbered by the cacophonous clamor prevalent on
                 platforms such as Twitter. My motivation to create this virtual
@@ -77,7 +90,7 @@ const Stream = () => {
         fontWeight='medium'
         border='none'
         outline='none'
-        background='#E2E8F0'
+        background='gray.200'
         _focus={{ boxShadow: 'none' }}
       />
     </Stack>
