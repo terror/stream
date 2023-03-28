@@ -1,7 +1,7 @@
 default:
   just --list
 
-all: build test clippy fmt-check forbid
+all: build clippy fmt-check forbid lint test
 
 build:
   cargo build
@@ -19,6 +19,9 @@ fmt-check:
 
 forbid:
   ./bin/forbid
+
+lint:
+  npm run lint
 
 run *args:
   cargo run -- {{args}}
