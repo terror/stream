@@ -48,7 +48,7 @@ export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent maxW='85%'>
         <ModalHeader>Post</ModalHeader>
         <ModalCloseButton />
         <ModalBody mb='4'>
@@ -62,7 +62,7 @@ export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
               />
             </FormControl>
             <Flex direction='row' overflow='auto'>
-              <FormControl id='content' mb={4} w='50%' m='2'>
+              <FormControl id='content' mb={4} mr={2} w='50%'>
                 <FormLabel>Content</FormLabel>
                 <Textarea
                   value={content}
@@ -70,7 +70,7 @@ export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
                   isRequired
                 />
               </FormControl>
-              <Box w='50%' m='2'>
+              <Box w='50%' ml={2}>
                 <Text fontWeight='medium' mb='4'>
                   Preview
                 </Text>
@@ -85,7 +85,7 @@ export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
                 onChange={(event) => setTags(event.target.value)}
               />
             </FormControl>
-            <Button mt='4' type='submit'>
+            <Button mt='2' type='submit'>
               Publish
             </Button>
           </form>
