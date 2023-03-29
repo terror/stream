@@ -1,4 +1,5 @@
 import {
+  Box,
   Checkbox,
   Code,
   Divider,
@@ -39,18 +40,21 @@ interface Defaults extends Components {
 
 export const defaults: Defaults = {
   p: (props) => {
-    return <Text mb={2}>{props.children}</Text>;
+    return <Text>{props.children}</Text>;
   },
+
   em: (props) => {
     return <Text as='em'>{props.children}</Text>;
   },
+
   blockquote: (props) => {
     return (
-      <Code as='blockquote' p={2}>
-        {props.children}
-      </Code>
+      <Box borderLeft='4px' borderColor='gray.300' pl={2} lineHeight='lg'>
+        <Text fontWeight='medium'>{props.children}</Text>
+      </Box>
     );
   },
+
   code: (props) => {
     const { inline, children, className } = props;
 
@@ -73,41 +77,52 @@ export const defaults: Defaults = {
       />
     );
   },
+
   del: (props) => {
-    const { children } = props;
-    return <Text as='del'>{children}</Text>;
+    return <Text as='del'>{props.children}</Text>;
   },
+
   hr: (_) => {
     return <Divider />;
   },
+
   a: Link,
+
   img: Image,
+
   text: (props) => {
     const { children } = props;
     return <Text as='span'>{children}</Text>;
   },
+
   ul: (props) => {
     const { ordered, children, depth } = props;
+
     const attrs = getCoreProps(props);
+
     let Element = UnorderedList;
+
     let styleType = 'disc';
+
     if (ordered) {
       Element = OrderedList;
       styleType = 'decimal';
     }
+
     if (depth === 1) styleType = 'circle';
+
     return (
       <Element
-        spacing={2}
         as={ordered ? 'ol' : 'ul'}
-        styleType={styleType}
         pl={4}
+        styleType={styleType}
         {...attrs}
       >
         {children}
       </Element>
     );
   },
+
   ol: (props) => {
     const { ordered, children, depth } = props;
 
@@ -126,16 +141,16 @@ export const defaults: Defaults = {
 
     return (
       <Element
-        spacing={2}
         as={ordered ? 'ol' : 'ul'}
-        styleType={styleType}
         pl={4}
+        styleType={styleType}
         {...attrs}
       >
         {children}
       </Element>
     );
   },
+
   li: (props) => {
     const { children, checked } = props;
 
@@ -158,6 +173,7 @@ export const defaults: Defaults = {
       </ListItem>
     );
   },
+
   heading: (props) => {
     return (
       <Heading
@@ -169,14 +185,21 @@ export const defaults: Defaults = {
       </Heading>
     );
   },
+
   pre: (props) => {
     return <chakra.pre {...getCoreProps(props)}>{props.children}</chakra.pre>;
   },
+
   table: Table,
+
   thead: Thead,
+
   tbody: Tbody,
+
   tr: (props) => <Tr>{props.children}</Tr>,
+
   td: (props) => <Td>{props.children}</Td>,
+
   th: (props) => <Th>{props.children}</Th>,
 };
 
