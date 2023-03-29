@@ -23,8 +23,14 @@ forbid:
 lint:
   npm run lint
 
+restart:
+  docker-compose down --volumes && just services
+
 run *args:
   cargo run -- {{args}}
+
+services:
+  docker-compose up -d
 
 test:
   cargo test

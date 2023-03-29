@@ -92,7 +92,7 @@ const Stream = () => {
         fontWeight='medium'
         border='none'
         outline='none'
-        background={colorMode === 'light' ? 'gray.200' : 'gray.700' }
+        background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
         _focus={{ boxShadow: 'none' }}
       />
     </Stack>
