@@ -86,7 +86,7 @@ pub(crate) async fn delete_post(
   AppState(db): AppState<Arc<Db>>,
   user: User,
 ) -> Result<impl IntoResponse> {
-  debug!("Updating post...");
+  debug!("Deleting post...");
 
   if !user.is_admin() {
     return Err(Error(anyhow!("Must be admin to delete posts")));
@@ -94,7 +94,7 @@ pub(crate) async fn delete_post(
 
   db.delete_post(params.timestamp).await?;
 
-  debug!("Post updated successfully.");
+  debug!("Post deleted successfully.");
 
   Ok(())
 }

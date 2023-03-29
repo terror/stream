@@ -1,15 +1,17 @@
+import { AddIcon } from '@chakra-ui/icons';
 import {
   Button,
   Center,
   Flex,
   Heading,
+  IconButton,
   Input,
   Spinner,
   Stack,
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { useAuth } from '../hooks/useAuth';
@@ -30,6 +32,8 @@ export const Stream = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [posts, setPosts] = useState<PostType[]>([]);
+
+  const value = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchClient
@@ -54,6 +58,11 @@ export const Stream = () => {
     }
   };
 
+  const handleTagClick = (tag: string) => {
+    if (value.current) value.current.value = tag;
+    handleInputChange(tag);
+  };
+
   const fetchMore = async () => {
     const batch = await fetchClient.getData<PostType[]>(
       `/posts?limit=${limit}&offset=${offset}`
@@ -72,15 +81,17 @@ export const Stream = () => {
         <Heading>Liam's stream</Heading>
         {user && user.isAdmin && (
           <Fragment>
-            <Button
-              mt='2'
+            <IconButton
+              aria-label='add'
+              background='transparent'
+              icon={<AddIcon />}
               ml='2'
+              mt='2'
               onClick={onOpen}
               size='sm'
-              background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
             >
               +
-            </Button>
+            </IconButton>
             <PostForm isOpen={isOpen} onClose={onClose} />
           </Fragment>
         )}
@@ -92,6 +103,7 @@ export const Stream = () => {
         outline='none'
         background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
         _focus={{ boxShadow: 'none' }}
+        ref={value}
         onChange={(e) => handleInputChange(e.target.value)}
       />
       <InfiniteScroll
@@ -106,13 +118,7 @@ export const Stream = () => {
         style={{ overflowY: 'hidden' }}
       >
         {posts.map((post, i) => (
-          <Post
-            key={i}
-            title={post.title}
-            timestamp={post.timestamp}
-            content={post.content}
-            tags={post.tags}
-          />
+          <Post key={i} post={post} onTagClick={handleTagClick} />
         ))}
       </InfiniteScroll>
     </Stack>

@@ -1,6 +1,6 @@
 export type Post = {
   title?: string;
-  content: string;
   timestamp: string;
+  content: string;
   tags: string[];
 };

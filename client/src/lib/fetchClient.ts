@@ -18,4 +18,20 @@ export const fetchClient = {
       ...init,
     });
   },
+  put: async (endpoint: string, data: any, init?: RequestInit) => {
+    return fetch('/api' + endpoint, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      ...init,
+    });
+  },
+  delete: async (endpoint: string, init?: RequestInit) => {
+    return fetch('/api' + endpoint, {
+      method: 'DELETE',
+      ...init,
+    });
+  },
 };

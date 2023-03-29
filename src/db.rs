@@ -81,7 +81,7 @@ impl Db {
     )
   }
 
-  pub async fn delete_post(
+  pub(crate) async fn delete_post(
     &self,
     timestamp: DateTime<Utc>,
   ) -> Result<DeleteResult> {
@@ -99,7 +99,7 @@ impl Db {
     )
   }
 
-  pub async fn search(&self, query: &str) -> Result<Vec<Post>> {
+  pub(crate) async fn search(&self, query: &str) -> Result<Vec<Post>> {
     info!("Received query: {query}");
 
     Ok(

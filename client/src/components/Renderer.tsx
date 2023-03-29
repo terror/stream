@@ -40,11 +40,15 @@ interface Defaults extends Components {
 
 export const defaults: Defaults = {
   p: (props) => {
-    return <Text>{props.children}</Text>;
+    return <Text fontWeight='medium'>{props.children}</Text>;
   },
 
   em: (props) => {
-    return <Text as='em'>{props.children}</Text>;
+    return (
+      <Text fontWeight='medium' as='em'>
+        {props.children}
+      </Text>
+    );
   },
 
   blockquote: (props) => {
@@ -66,6 +70,7 @@ export const defaults: Defaults = {
 
     return (
       <Code
+        overflow='scroll'
         className={className}
         p='2'
         borderRadius='md'
@@ -91,8 +96,11 @@ export const defaults: Defaults = {
   img: Image,
 
   text: (props) => {
-    const { children } = props;
-    return <Text as='span'>{children}</Text>;
+    return (
+      <Text fontWeight='medium' as='span'>
+        {props.children}
+      </Text>
+    );
   },
 
   ul: (props) => {
@@ -114,6 +122,7 @@ export const defaults: Defaults = {
     return (
       <Element
         as={ordered ? 'ol' : 'ul'}
+        fontWeight='medium'
         pl={4}
         styleType={styleType}
         {...attrs}
@@ -142,6 +151,7 @@ export const defaults: Defaults = {
     return (
       <Element
         as={ordered ? 'ol' : 'ul'}
+        fontWeight='medium'
         pl={4}
         styleType={styleType}
         {...attrs}
@@ -166,8 +176,9 @@ export const defaults: Defaults = {
 
     return (
       <ListItem
-        {...getCoreProps(props)}
+        fontWeight='medium'
         listStyleType={checked !== null ? 'none' : 'inherit'}
+        {...getCoreProps(props)}
       >
         {checkbox || children}
       </ListItem>
