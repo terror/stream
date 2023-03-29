@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: PropsWithChildren<any>) => {
   useEffect(() => {
     fetchClient
       .getData<User>('/user', { credentials: 'include' })
-      .then((user) => setUser(user))
+      .then((data) => setUser(data))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }, []);
