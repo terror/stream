@@ -6,6 +6,7 @@
 *.suo
 *.sw?
 .DS_Store
+.env
 .idea
 .vscode/*
 /target
