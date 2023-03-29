@@ -1,11 +1,17 @@
 use super::*;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub(crate) struct Post {
-  title: Option<String>,
-  timestamp: DateTime<Utc>,
-  content: String,
-  tags: Vec<String>,
+  pub(crate) title: Option<String>,
+  pub(crate) timestamp: DateTime<Utc>,
+  pub(crate) content: String,
+  pub(crate) tags: Vec<String>,
+}
+
+pub(crate) async fn get_posts(
+  AppState(db): AppState<Db>,
+) -> Result<impl IntoResponse> {
+  Ok(Json(db.posts().await?))
 }
 
 #[derive(Debug, Deserialize)]

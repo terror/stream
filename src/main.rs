@@ -4,7 +4,7 @@ use {
     auth::{AuthRedirect, COOKIE_NAME},
     db::Db,
     error::Error,
-    post::Post,
+    posts::Post,
     server::Server,
     state::State,
     subcommand::Subcommand,
@@ -27,6 +27,7 @@ use {
   chrono::prelude::*,
   clap::Parser,
   dotenv::dotenv,
+  futures::stream::TryStreamExt,
   http::{
     header::{self, SET_COOKIE},
     request::Parts,
@@ -34,8 +35,10 @@ use {
   },
   log::{debug, info},
   mongodb::{
-    bson::doc, options::ClientOptions, results::InsertOneResult, Client,
-    Database,
+    bson::doc,
+    options::{ClientOptions, FindOptions},
+    results::InsertOneResult,
+    Client, Database,
   },
   oauth2::{
     basic::BasicClient, reqwest::async_http_client, AuthUrl, AuthorizationCode,
@@ -51,11 +54,14 @@ use {
   tower_http::cors::CorsLayer,
 };
 
+#[cfg(test)]
+use std::sync::atomic::{AtomicUsize, Ordering};
+
 mod arguments;
 mod auth;
 mod db;
 mod error;
-mod post;
+mod posts;
 mod server;
 mod state;
 mod subcommand;

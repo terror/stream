@@ -47,6 +47,21 @@ impl Db {
     }
   }
 
+  pub(crate) async fn posts(&self) -> Result<Vec<Post>> {
+    Ok(
+      self
+        .database
+        .collection::<Post>(Db::POST_COLLECTION)
+        .find(
+          None,
+          FindOptions::builder().sort(doc! { "timestamp": 1 }).build(),
+        )
+        .await?
+        .try_collect::<Vec<Post>>()
+        .await?,
+    )
+  }
+
   async fn add_user(&self, user: User) -> Result<StoredUser> {
     info!("Inserting user into database...");
 
@@ -88,5 +103,86 @@ impl Db {
         .find_one(doc! { "login": login }, None)
         .await?,
     )
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use {super::*, pretty_assertions::assert_eq};
+
+  struct TestContext {
+    db: Db,
+    db_name: String,
+  }
+
+  impl TestContext {
+    async fn new() -> Self {
+      static TEST_DATABASE_NUMBER: AtomicUsize = AtomicUsize::new(0);
+
+      let test_database_number =
+        TEST_DATABASE_NUMBER.fetch_add(1, Ordering::Relaxed);
+
+      let db_name = format!(
+        "stream-test-{}-{}",
+        std::time::SystemTime::now()
+          .duration_since(std::time::SystemTime::UNIX_EPOCH)
+          .unwrap()
+          .as_millis(),
+        test_database_number,
+      );
+
+      let db = Db::connect(&db_name).await.unwrap();
+
+      TestContext { db, db_name }
+    }
+  }
+
+  #[tokio::test(flavor = "multi_thread")]
+  async fn on_disk_database_is_persistent() {
+    let TestContext { db, db_name } = TestContext::new().await;
+
+    assert_eq!(db.posts().await.unwrap().len(), 0);
+
+    db.add_post(Post::default()).await.unwrap();
+
+    assert_eq!(db.posts().await.unwrap().len(), 1);
+
+    drop(db);
+
+    let db = Db::connect(&db_name).await.unwrap();
+
+    assert_eq!(db.posts().await.unwrap().len(), 1);
+  }
+
+  #[tokio::test(flavor = "multi_thread")]
+  async fn posts_are_sorted_by_timestamp() {
+    let TestContext { db, .. } = TestContext::new().await;
+
+    let now = Utc::now();
+
+    for content in ["foo", "bar"] {
+      db.add_post(Post {
+        title: None,
+        content: content.to_string(),
+        timestamp: Utc::now(),
+        tags: vec![],
+      })
+      .await
+      .unwrap();
+    }
+
+    db.add_post(Post {
+      title: None,
+      content: "baz".to_string(),
+      timestamp: now,
+      tags: vec![],
+    })
+    .await
+    .unwrap();
+
+    let posts = db.posts().await.unwrap();
+
+    assert_eq!(posts.len(), 3);
+    assert_eq!(posts.first().unwrap().content, "baz");
   }
 }
