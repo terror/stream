@@ -36,7 +36,7 @@ export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
       await fetchClient.post('/posts', {
         title,
         content,
-        tags: tags.split(' ').map((tag) => `#${tag}`),
+        tags: tags.length === 0 ? [] : tags.split(' ').map((tag) => `#${tag}`),
       });
     } catch (err) {
       console.error(err);
