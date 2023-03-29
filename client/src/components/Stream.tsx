@@ -46,7 +46,7 @@ export const Stream = () => {
         await fetchClient.getData<PostType[]>(
           query === ''
             ? `/posts?limit=${limit}&offset=${0}`
-            : `/search?query=${query}`
+            : `/search?query=${encodeURIComponent(query)}`
         )
       );
     } catch (err) {
