@@ -63,7 +63,7 @@ jobs:
         run: ./bin/clippy
 
       - name: Check lockfile
-        run: cargo update --locked --package server
+        run: cargo update --locked --package stream
 
       - name: Check rust formatting
         run: cargo fmt --all -- --check
