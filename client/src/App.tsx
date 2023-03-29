@@ -82,6 +82,8 @@ const Navbar = () => {
 };
 
 const Stream = () => {
+  const { colorMode } = useColorMode();
+
   return (
     <Stack p='4'>
       <Heading>Liam's stream</Heading>
@@ -90,7 +92,7 @@ const Stream = () => {
         fontWeight='medium'
         border='none'
         outline='none'
-        background='gray.200'
+        background={colorMode === 'light' ? 'gray.200' : 'gray.700' }
         _focus={{ boxShadow: 'none' }}
       />
     </Stack>
