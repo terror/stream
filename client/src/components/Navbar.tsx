@@ -67,7 +67,7 @@ export const Navbar = () => {
                 without the typical interruptions of social media was truly
                 inspiring. If you're curious and would like to experience this
                 unique atmosphere for yourself, I highly recommend checking out
-                his stream over at {' '}
+                his stream over at{' '}
                 <Link href='https://stream.thesephist.com/' target='_blank'>
                   https://stream.thesephist.com/
                 </Link>
