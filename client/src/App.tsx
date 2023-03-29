@@ -27,17 +27,12 @@ import {
 } from '@chakra-ui/react';
 
 type User = {
-  id: number;
   login: string;
   name: string;
   bio?: string;
-  avatar_url?: string;
+  avatarUrl?: string;
   url?: string;
-  is_admin?: boolean;
-};
-
-type UserResponse = {
-  user: User;
+  isAdmin: boolean;
 };
 
 const fetchClient = {
@@ -59,16 +54,15 @@ const fetchClient = {
 export const AuthContext = createContext<User | undefined>(undefined);
 
 export const AuthProvider = ({ children }: PropsWithChildren<any>) => {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchClient
-      .getData<UserResponse>('/user', { credentials: 'include' })
-      .then((data) => {
-        setUser(data.user);
-        setLoading(false);
-      });
+      .getData<User>('/user', { credentials: 'include' })
+      .then((user) => setUser(user))
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -161,9 +155,18 @@ const Stream = () => {
 
   return (
     <Stack p='4'>
-    <Flex alignItems='center'>
-      <Heading>Liam's stream</Heading>
-      {user && <Button mt='2' ml='2' size='sm' background={colorMode === 'light' ? 'gray.200' : 'gray.700'}>+</Button>}
+      <Flex alignItems='center'>
+        <Heading>Liam's stream</Heading>
+        {user && (
+          <Button
+            mt='2'
+            ml='2'
+            size='sm'
+            background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
+          >
+            +
+          </Button>
+        )}
       </Flex>
       <Input
         placeholder='Search the stream...'

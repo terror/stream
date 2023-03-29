@@ -2,7 +2,7 @@ use super::*;
 
 const ADMINS: [u64; 1] = [31192478];
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub(crate) struct User {
   pub(crate) id: u64,
   pub(crate) login: String,
@@ -10,7 +10,17 @@ pub(crate) struct User {
   pub(crate) bio: Option<String>,
   pub(crate) avatar_url: Option<String>,
   pub(crate) url: Option<String>,
-  pub(crate) is_admin: Option<bool>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct StoredUser {
+  pub(crate) login: String,
+  pub(crate) name: String,
+  pub(crate) bio: Option<String>,
+  pub(crate) avatar_url: Option<String>,
+  pub(crate) url: Option<String>,
+  pub(crate) is_admin: bool,
 }
 
 impl User {
@@ -19,13 +29,11 @@ impl User {
   }
 }
 
-#[derive(Serialize, Deserialize)]
-struct UserResponse {
-  user: Option<User>,
-}
-
-pub(crate) async fn get_user(user: Option<User>) -> impl IntoResponse {
-  Json(UserResponse { user })
+pub(crate) async fn get_user(
+  AppState(db): AppState<Db>,
+  user: User,
+) -> Result<impl IntoResponse> {
+  Ok(Json(serde_json::to_string(&db.load_user(user).await?)?))
 }
 
 #[async_trait]
