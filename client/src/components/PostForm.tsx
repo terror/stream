@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-
 import {
   Button,
   FormControl,
@@ -13,6 +11,7 @@ import {
   ModalOverlay,
   Textarea,
 } from '@chakra-ui/react';
+import React, { useState } from 'react';
 
 import { fetchClient } from '../lib/fetchClient';
 
@@ -38,6 +37,8 @@ export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
     } catch (err) {
       console.error(err);
     }
+
+    onClose();
   };
 
   return (

@@ -1,5 +1,3 @@
-import { Fragment, useState, useEffect } from 'react';
-
 import {
   Button,
   Flex,
@@ -9,12 +7,13 @@ import {
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
+import { Fragment, useEffect, useState } from 'react';
 
+import { useAuth } from '../hooks/useAuth';
+import { fetchClient } from '../lib/fetchClient';
 import { Post as PostType } from '../model/Post';
 import { Post } from './Post';
 import { PostForm } from './PostForm';
-import { fetchClient } from '../lib/fetchClient';
-import { useAuth } from '../hooks/useAuth';
 
 export const Stream = () => {
   const user = useAuth();
