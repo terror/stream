@@ -21,7 +21,7 @@ use {
     headers::Cookie,
     response::{IntoResponse, Redirect, Response, TypedHeader},
     routing::Router,
-    routing::{get, post},
+    routing::{delete, get, post, put},
     Json, RequestPartsExt,
   },
   chrono::prelude::*,
@@ -36,8 +36,8 @@ use {
   log::{debug, error, info},
   mongodb::{
     bson::{doc, Document},
-    options::{ClientOptions, FindOptions, IndexOptions},
-    results::{CreateIndexResult, InsertOneResult},
+    options::{ClientOptions, FindOptions, IndexOptions, UpdateModifications},
+    results::{CreateIndexResult, DeleteResult, InsertOneResult, UpdateResult},
     Client, Database, IndexModel,
   },
   oauth2::{

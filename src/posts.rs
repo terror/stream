@@ -57,3 +57,44 @@ pub(crate) async fn add_post(
 
   Ok(())
 }
+
+pub(crate) async fn update_post(
+  AppState(db): AppState<Arc<Db>>,
+  user: User,
+  body: Json<Post>,
+) -> Result<impl IntoResponse> {
+  debug!("Updating post...");
+
+  if !user.is_admin() {
+    return Err(Error(anyhow!("Must be admin to update posts")));
+  }
+
+  db.update_post(body.0).await?;
+
+  debug!("Post updated successfully.");
+
+  Ok(())
+}
+
+#[derive(Serialize, Deserialize)]
+pub(crate) struct DeletePostParams {
+  timestamp: DateTime<Utc>,
+}
+
+pub(crate) async fn delete_post(
+  Query(params): Query<DeletePostParams>,
+  AppState(db): AppState<Arc<Db>>,
+  user: User,
+) -> Result<impl IntoResponse> {
+  debug!("Updating post...");
+
+  if !user.is_admin() {
+    return Err(Error(anyhow!("Must be admin to delete posts")));
+  }
+
+  db.delete_post(params.timestamp).await?;
+
+  debug!("Post updated successfully.");
+
+  Ok(())
+}

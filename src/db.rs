@@ -63,6 +63,42 @@ impl Db {
     )
   }
 
+  pub(crate) async fn update_post(&self, post: Post) -> Result<UpdateResult> {
+    Ok(
+      self
+        .database
+        .collection::<Post>(Db::POST_COLLECTION)
+        .update_one(
+          doc! { "timestamp": post.timestamp },
+          UpdateModifications::Document(doc! {
+            "title" : post.title,
+            "content": post.content,
+            "tags": post.tags
+          }),
+          None,
+        )
+        .await?,
+    )
+  }
+
+  pub async fn delete_post(
+    &self,
+    timestamp: DateTime<Utc>,
+  ) -> Result<DeleteResult> {
+    Ok(
+      self
+        .database
+        .collection::<Post>(Db::POST_COLLECTION)
+        .delete_one(
+          doc! {
+            "timestamp": timestamp
+          },
+          None,
+        )
+        .await?,
+    )
+  }
+
   pub async fn search(&self, query: &str) -> Result<Vec<Post>> {
     info!("Received query: {query}");
 
