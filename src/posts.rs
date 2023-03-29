@@ -36,6 +36,8 @@ pub(crate) async fn add_post(
     return Err(Error(anyhow!("Must be admin to add posts")));
   }
 
+  debug!("Adding post to database...");
+
   db.add_post(Post {
     title,
     timestamp: Utc::now(),
@@ -43,6 +45,8 @@ pub(crate) async fn add_post(
     tags,
   })
   .await?;
+
+  debug!("Post added successfully.");
 
   Ok(())
 }

@@ -54,7 +54,9 @@ impl Db {
         .collection::<Post>(Db::POST_COLLECTION)
         .find(
           None,
-          FindOptions::builder().sort(doc! { "timestamp": 1 }).build(),
+          FindOptions::builder()
+            .sort(doc! { "timestamp": -1 })
+            .build(),
         )
         .await?
         .try_collect::<Vec<Post>>()
@@ -155,7 +157,7 @@ mod tests {
   }
 
   #[tokio::test(flavor = "multi_thread")]
-  async fn posts_are_sorted_by_timestamp() {
+  async fn posts_are_sorted_by_timestamp_descending() {
     let TestContext { db, .. } = TestContext::new().await;
 
     let now = Utc::now();
@@ -183,6 +185,6 @@ mod tests {
     let posts = db.posts().await.unwrap();
 
     assert_eq!(posts.len(), 3);
-    assert_eq!(posts.first().unwrap().content, "baz");
+    assert_eq!(posts.last().unwrap().content, "baz");
   }
 }
