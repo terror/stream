@@ -9,6 +9,7 @@ import {
 
 import {
   Flex,
+  Button,
   HStack,
   Heading,
   Input,
@@ -62,11 +63,9 @@ export const AuthProvider = ({ children }: PropsWithChildren<any>) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     fetchClient
       .getData<UserResponse>('/user', { credentials: 'include' })
       .then((data) => {
-        console.log(data);
         setUser(data.user);
         setLoading(false);
       });
@@ -160,11 +159,12 @@ const Stream = () => {
 
   const user = useAuth();
 
-  console.log(user);
-
   return (
     <Stack p='4'>
+    <Flex alignItems='center'>
       <Heading>Liam's stream</Heading>
+      {user && <Button mt='2' ml='2' size='sm' background={colorMode === 'light' ? 'gray.200' : 'gray.700'}>+</Button>}
+      </Flex>
       <Input
         placeholder='Search the stream...'
         fontWeight='medium'
@@ -173,7 +173,6 @@ const Stream = () => {
         background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
         _focus={{ boxShadow: 'none' }}
       />
-      {user && <button>user login: {JSON.stringify(user)}</button>}
     </Stack>
   );
 };

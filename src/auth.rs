@@ -1,13 +1,6 @@
 use super::*;
 
-pub(crate) static COOKIE_NAME: &str = "SESSION";
-
-#[derive(Debug, Deserialize)]
-#[allow(unused)]
-pub(crate) struct AuthRequest {
-  pub(crate) code: String,
-  pub(crate) state: String,
-}
+pub(crate) static COOKIE_NAME: &str = "session";
 
 pub(crate) struct AuthRedirect;
 
@@ -17,23 +10,30 @@ impl IntoResponse for AuthRedirect {
   }
 }
 
+#[derive(Debug, Deserialize)]
+#[allow(unused)]
+pub(crate) struct AuthRequest {
+  pub(crate) code: String,
+  pub(crate) state: String,
+}
+
 pub(crate) async fn login(
   AppState(state): AppState<State>,
-) -> Result<Redirect> {
-  Ok(Redirect::to(
+) -> impl IntoResponse {
+  Redirect::to(
     state
       .oauth_client
       .authorize_url(CsrfToken::new_random)
       .url()
       .0
       .as_ref(),
-  ))
+  )
 }
 
 pub(crate) async fn authorized(
   Query(query): Query<AuthRequest>,
   AppState(state): AppState<State>,
-) -> Result<(HeaderMap, Redirect)> {
+) -> Result<impl IntoResponse> {
   debug!("Fetching token from oauth client...");
 
   let token = state
@@ -74,13 +74,15 @@ pub(crate) async fn authorized(
     .parse()?,
   );
 
+  debug!("User authorized, redirecting to client...");
+
   Ok((headers, Redirect::to(CLIENT_URL)))
 }
 
 pub(crate) async fn logout(
   AppState(state): AppState<State>,
   TypedHeader(cookies): TypedHeader<Cookie>,
-) -> Result<Redirect> {
+) -> Result<impl IntoResponse> {
   let cookie = cookies
     .get(COOKIE_NAME)
     .ok_or(anyhow!("Failed to get cookie"))?;

@@ -2031,7 +2031,6 @@ dependencies = [
  "anyhow",
  "async-mongodb-session",
  "async-session",
- "async-trait",
  "axum",
  "axum-server",
  "chrono",

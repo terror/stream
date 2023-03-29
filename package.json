@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
-    "dev": "vite",
+    "dev": "vite --host",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "lint": "tslint -c tslint.json 'client/**/{*.ts,*.tsx}'",

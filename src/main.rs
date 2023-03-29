@@ -12,8 +12,7 @@ use {
   },
   anyhow::anyhow,
   async_mongodb_session::MongodbSessionStore,
-  async_session::{Session, SessionStore},
-  async_trait::async_trait,
+  async_session::{async_trait, Session, SessionStore},
   axum::{
     extract::{
       rejection::TypedHeaderRejectionReason, FromRef, FromRequestParts, Query,
@@ -62,7 +61,7 @@ mod state;
 mod subcommand;
 mod user;
 
-const CLIENT_URL: &str = "http://localhost:5173";
+const CLIENT_URL: &str = "http://127.0.0.1:5173";
 
 type Result<T = (), E = Error> = std::result::Result<T, E>;
 
