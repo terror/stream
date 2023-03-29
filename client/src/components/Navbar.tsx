@@ -53,11 +53,21 @@ export const Navbar = () => {
           <ModalBody mb='4'>
             <Stack spacing='20px'>
               <Text fontWeight='medium'>
-                The stream provides a serene abode for me to articulate my
-                thoughts, unencumbered by the cacophonous clamor prevalent on
-                platforms such as Twitter. My motivation to create this virtual
-                sanctuary was kindled by the captivating essence of Linus Lee's
-                stream, which can be savored at{' '}
+                As someone who values a calm and peaceful environment for
+                introspection and creativity, I find that the stream provides an
+                idyllic haven to articulate my thoughts. Unlike other social
+                media platforms that can be inundated with noise and chatter,
+                the stream offers a serene space to focus and share ideas
+                without the distractions of a crowded feed.
+              </Text>
+              <Text fontWeight='medium'>
+                In fact, it was the captivating and serene nature of Linus Lee's
+                stream that inspired me to create my own virtual sanctuary. The
+                way his stream allowed for deep thinking and contemplation
+                without the typical interruptions of social media was truly
+                inspiring. If you're curious and would like to experience this
+                unique atmosphere for yourself, I highly recommend checking out
+                his stream over at {' '}
                 <Link href='https://stream.thesephist.com/' target='_blank'>
                   https://stream.thesephist.com/
                 </Link>
@@ -65,18 +75,24 @@ export const Navbar = () => {
               </Text>
               .
               <Text fontWeight='medium'>
-                You can{' '}
+                If you do decide to join in on the conversation, please note
+                that you'll need to{' '}
                 <Link href={`${import.meta.env.VITE_API_URL}/auth/login`}>
                   login
                 </Link>{' '}
-                to comment on posts, or if you're an admin you can craft posts
-                (which you're not, since the only admin account is my own).
+                to comment on posts. Additionally, if you happen to have admin
+                access, you'll be able to craft new posts. However, I should
+                mention that the only admin account at this time is my own, so
+                you don't have admin privileges.
               </Text>
               <Text fontWeight='semibold'>
-                Check out the code on GitHub:{' '}
+                If you're interested in exploring the code behind the stream,
+                you can find it on GitHub at{' '}
                 <Link href='https://github.com/terror/stream' target='_blank'>
-                  https://github.com/terror/stream
-                </Link>
+                  https://github.com/terror/stream.
+                </Link>{' '}
+                I hope you'll enjoy your time here and find the same sense of
+                peace and clarity that I have found in this virtual oasis.
               </Text>
             </Stack>
           </ModalBody>
