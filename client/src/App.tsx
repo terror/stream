@@ -49,7 +49,7 @@ type User = {
   avatar_url?: string;
   url?: string;
   is_admin: boolean;
-}
+};
 
 type UserResponse = {
   user: User;
@@ -169,7 +169,7 @@ const Stream = () => {
         background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
         _focus={{ boxShadow: 'none' }}
       />
-      { user && <button>user login: {JSON.stringify(user)}</button>}
+      {user && <button>user login: {JSON.stringify(user)}</button>}
     </Stack>
   );
 };
