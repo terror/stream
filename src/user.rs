@@ -29,36 +29,39 @@ pub(crate) async fn get_user(user: Option<User>) -> impl IntoResponse {
 }
 
 #[async_trait]
-impl<S, B> FromRequest<S, B> for User
+impl<S> FromRequestParts<S> for User
 where
-  B: Send + 'static,
-  S: Send + Sync,
   MongodbSessionStore: FromRef<S>,
+  S: Send + Sync,
 {
   type Rejection = AuthRedirect;
 
-  async fn from_request(
-    req: Request<B>,
+  async fn from_request_parts(
+    parts: &mut Parts,
     state: &S,
   ) -> Result<Self, Self::Rejection> {
     let session_store = MongodbSessionStore::from_ref(state);
 
-    let cookies = req
-      .into_parts()
-      .0
-      .extract::<TypedHeader<Cookie>>()
-      .await
-      .map_err(|err| match *err.name() {
-        header::COOKIE => match err.reason() {
-          TypedHeaderRejectionReason::Missing => AuthRedirect,
-          _ => panic!("Unexpected error getting cookies: {err}"),
-        },
-        _ => panic!("Unexpected error getting cookies: {err}"),
+    let cookies =
+      parts.extract::<TypedHeader<Cookie>>().await.map_err(|e| {
+        match *e.name() {
+          header::COOKIE => match e.reason() {
+            TypedHeaderRejectionReason::Missing => AuthRedirect,
+            _ => {
+              log::error!("Unexpected error getting cookie header(s): {}", e);
+              AuthRedirect
+            }
+          },
+          _ => {
+            log::error!("Unexpected error getting cookies: {}", e);
+            AuthRedirect
+          }
+        }
       })?;
 
     Ok(
       session_store
-        .load_session(cookies.get(COOKIE_NAME).ok_or(AuthRedirect)?.to_string())
+        .load_session(cookies.get(COOKIE_NAME).ok_or(AuthRedirect)?.to_owned())
         .await
         .unwrap()
         .ok_or(AuthRedirect)?

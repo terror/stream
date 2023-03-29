@@ -3,6 +3,7 @@ use {
     arguments::Arguments,
     auth::{AuthRedirect, COOKIE_NAME},
     db::Db,
+    error::Error,
     post::Post,
     server::Server,
     state::State,
@@ -15,20 +16,22 @@ use {
   async_trait::async_trait,
   axum::{
     extract::{
-      rejection::TypedHeaderRejectionReason, FromRef, FromRequest, Query,
+      rejection::TypedHeaderRejectionReason, FromRef, FromRequestParts, Query,
       State as AppState,
     },
     headers::Cookie,
-    response::{IntoResponse, Json, Redirect, Response},
-    routing::get,
-    RequestPartsExt, Router, TypedHeader,
+    response::{IntoResponse, Redirect, Response, TypedHeader},
+    routing::Router,
+    routing::{get, post},
+    Json, RequestPartsExt,
   },
   chrono::prelude::*,
   clap::Parser,
   dotenv::dotenv,
   http::{
     header::{self, SET_COOKIE},
-    HeaderMap, Request,
+    request::Parts,
+    HeaderMap, StatusCode,
   },
   log::{debug, info},
   mongodb::{
@@ -40,13 +43,19 @@ use {
     ClientId, ClientSecret, CsrfToken, RedirectUrl, TokenResponse, TokenUrl,
   },
   serde::{Deserialize, Serialize},
-  std::{env, net::SocketAddr, process},
+  std::{
+    env,
+    fmt::{self, Display, Formatter},
+    net::SocketAddr,
+    process,
+  },
   tower_http::cors::CorsLayer,
 };
 
 mod arguments;
 mod auth;
 mod db;
+mod error;
 mod post;
 mod server;
 mod state;
@@ -55,7 +64,7 @@ mod user;
 
 const CLIENT_URL: &str = "http://localhost:5173";
 
-type Result<T = (), E = anyhow::Error> = std::result::Result<T, E>;
+type Result<T = (), E = Error> = std::result::Result<T, E>;
 
 #[tokio::main]
 async fn main() {
