@@ -30,12 +30,54 @@ impl Db {
     })
   }
 
+  pub(crate) async fn index(&self) -> Result {
+    info!("Building post index...");
+
+    self
+      .create_post_index(
+        doc! {
+          "title": "text",
+          "content": "text",
+          "tags": "text",
+        },
+        doc! {
+          "title": 2,
+          "content": 2,
+          "tags": 1,
+        },
+      )
+      .await?;
+
+    info!("Post index complete.");
+
+    Ok(())
+  }
+
   pub(crate) async fn add_post(&self, post: Post) -> Result<InsertOneResult> {
     Ok(
       self
         .database
         .collection::<Post>(Db::POST_COLLECTION)
         .insert_one(post, None)
+        .await?,
+    )
+  }
+
+  pub async fn search(&self, query: &str) -> Result<Vec<Post>> {
+    info!("Received query: {query}");
+
+    Ok(
+      self
+        .database
+        .collection::<Post>(Db::POST_COLLECTION)
+        .find(
+          doc! { "$text" : { "$search": query } },
+          FindOptions::builder()
+            .sort(doc! { "score": { "$meta" : "textScore" }})
+            .build(),
+        )
+        .await?
+        .try_collect::<Vec<Post>>()
         .await?,
     )
   }
@@ -103,6 +145,26 @@ impl Db {
         .database
         .collection::<StoredUser>(Db::USER_COLLECTION)
         .find_one(doc! { "login": login }, None)
+        .await?,
+    )
+  }
+
+  async fn create_post_index(
+    &self,
+    keys: Document,
+    weights: Document,
+  ) -> Result<CreateIndexResult> {
+    Ok(
+      self
+        .database
+        .collection::<Post>(Db::POST_COLLECTION)
+        .create_index(
+          IndexModel::builder()
+            .keys(keys)
+            .options(IndexOptions::builder().weights(weights).build())
+            .build(),
+          None,
+        )
         .await?,
     )
   }

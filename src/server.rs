@@ -14,6 +14,16 @@ impl Server {
 
     log::debug!("Listening on port: {}", addr.port());
 
+    let db = Arc::new(Db::connect(&self.db_name).await?);
+
+    let clone = db.clone();
+
+    tokio::spawn(async move {
+      if let Err(error) = clone.index().await {
+        error!("error: {error}");
+      }
+    });
+
     axum_server::Server::bind(addr)
       .serve(
         Router::new()
@@ -22,8 +32,9 @@ impl Server {
           .route("/auth/logout", get(auth::logout))
           .route("/posts", get(posts::get_posts))
           .route("/posts", post(posts::add_post))
+          .route("/search", get(search::search))
           .route("/user", get(user::get_user))
-          .with_state(State::new(&self.db_name).await?)
+          .with_state(State::new(&self.db_name, db).await?)
           .layer(CorsLayer::very_permissive())
           .into_make_service(),
       )

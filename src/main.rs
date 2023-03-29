@@ -33,12 +33,12 @@ use {
     request::Parts,
     HeaderMap, StatusCode,
   },
-  log::{debug, info},
+  log::{debug, error, info},
   mongodb::{
-    bson::doc,
-    options::{ClientOptions, FindOptions},
-    results::InsertOneResult,
-    Client, Database,
+    bson::{doc, Document},
+    options::{ClientOptions, FindOptions, IndexOptions},
+    results::{CreateIndexResult, InsertOneResult},
+    Client, Database, IndexModel,
   },
   oauth2::{
     basic::BasicClient, reqwest::async_http_client, AuthUrl, AuthorizationCode,
@@ -50,6 +50,7 @@ use {
     fmt::{self, Display, Formatter},
     net::SocketAddr,
     process,
+    sync::Arc,
   },
   tower_http::cors::CorsLayer,
 };
@@ -62,6 +63,7 @@ mod auth;
 mod db;
 mod error;
 mod posts;
+mod search;
 mod server;
 mod state;
 mod subcommand;

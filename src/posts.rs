@@ -9,7 +9,7 @@ pub(crate) struct Post {
 }
 
 pub(crate) async fn get_posts(
-  AppState(db): AppState<Db>,
+  AppState(db): AppState<Arc<Db>>,
 ) -> Result<impl IntoResponse> {
   Ok(Json(db.posts().await?))
 }
@@ -22,7 +22,7 @@ pub(crate) struct AddPostBody {
 }
 
 pub(crate) async fn add_post(
-  AppState(db): AppState<Db>,
+  AppState(db): AppState<Arc<Db>>,
   user: User,
   body: Json<AddPostBody>,
 ) -> Result<impl IntoResponse> {

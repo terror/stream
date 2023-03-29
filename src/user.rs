@@ -30,7 +30,7 @@ pub(crate) struct StoredUser {
 }
 
 pub(crate) async fn get_user(
-  AppState(db): AppState<Db>,
+  AppState(db): AppState<Arc<Db>>,
   user: User,
 ) -> Result<impl IntoResponse> {
   Ok(Json(serde_json::to_string(&db.load_user(user).await?)?))

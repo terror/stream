@@ -2,13 +2,13 @@ use super::*;
 
 #[derive(Debug, Clone)]
 pub(crate) struct State {
-  pub(crate) db: Db,
+  pub(crate) db: Arc<Db>,
   pub(crate) oauth_client: BasicClient,
   pub(crate) request_client: reqwest::Client,
   pub(crate) session_store: MongodbSessionStore,
 }
 
-impl FromRef<State> for Db {
+impl FromRef<State> for Arc<Db> {
   fn from_ref(state: &State) -> Self {
     state.db.clone()
   }
@@ -21,9 +21,9 @@ impl FromRef<State> for MongodbSessionStore {
 }
 
 impl State {
-  pub(crate) async fn new(db_name: &str) -> Result<Self> {
+  pub(crate) async fn new(db_name: &str, db: Arc<Db>) -> Result<Self> {
     Ok(Self {
-      db: Db::connect(db_name).await?,
+      db,
       oauth_client: BasicClient::new(
         ClientId::new(env::var("CLIENT_ID")?),
         Some(ClientSecret::new(env::var("CLIENT_SECRET")?)),

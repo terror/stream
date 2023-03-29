@@ -33,6 +33,18 @@ export const Stream = () => {
       .catch((err) => console.error(err));
   }, []);
 
+  const handleInputChange = async (query: string) => {
+    try {
+      setPosts(
+        query === ''
+          ? await fetchClient.getData<PostType[]>(`/posts`)
+          : await fetchClient.getData<PostType[]>(`/search?query=${query}`)
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Stack p='4'>
       <Flex alignItems='center'>
@@ -59,6 +71,7 @@ export const Stream = () => {
         outline='none'
         background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
         _focus={{ boxShadow: 'none' }}
+        onChange={(e) => handleInputChange(e.target.value)}
       />
       {posts.map((post, i) => (
         <Post
