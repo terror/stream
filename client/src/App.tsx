@@ -1,4 +1,11 @@
-import { Fragment } from 'react';
+import {
+  Fragment,
+  PropsWithChildren,
+  createContext,
+  useEffect,
+  useState,
+  useContext,
+} from 'react';
 
 import {
   Flex,
@@ -17,6 +24,63 @@ import {
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
+
+const fetchClient = {
+  async get(endpoint: string, init?: RequestInit) {
+    return fetch('/api' + endpoint, init);
+  },
+  async getData<T>(endpoint: string, init?: RequestInit) {
+    return (await (await this.get(endpoint, init)).json()) as T;
+  },
+  post: async (endpoint: string, data: any, init?: RequestInit) => {
+    return fetch('/api' + endpoint, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      ...init,
+    });
+  },
+};
+
+type User = {
+  id: number;
+  login: string;
+  name: string;
+  bio?: string;
+  avatar_url?: string;
+  url?: string;
+  is_admin: boolean;
+}
+
+type UserResponse = {
+  user: User;
+};
+
+export const AuthContext = createContext<User | undefined>(undefined);
+
+export const AuthProvider = ({ children }: PropsWithChildren<any>) => {
+  const [user, setUser] = useState<User>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchClient
+      .getData<UserResponse>('/user', { credentials: 'include' })
+      .then((data) => {
+        setUser(data.user);
+        setLoading(false);
+      });
+  }, []);
+
+  return (
+    <AuthContext.Provider value={user}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};
+
+const useAuth = () => {
+  return useContext(AuthContext);
+};
 
 const Navbar = () => {
   const { toggleColorMode } = useColorMode();
@@ -65,7 +129,15 @@ const Navbar = () => {
                 <Link href='https://stream.thesephist.com/' target='_blank'>
                   https://stream.thesephist.com/
                 </Link>
-                .
+              </Text>
+              .
+              <Text fontWeight='medium'>
+                You can{' '}
+                <Link href={`${import.meta.env.VITE_API_URL}/auth/login`}>
+                  login
+                </Link>{' '}
+                to comment on posts, or if you're an admin you can craft posts
+                (which you're not, since the only admin account is my own).
               </Text>
               <Text fontWeight='semibold'>
                 Check out the code on GitHub:{' '}
@@ -84,6 +156,8 @@ const Navbar = () => {
 const Stream = () => {
   const { colorMode } = useColorMode();
 
+  const user = useAuth();
+
   return (
     <Stack p='4'>
       <Heading>Liam's stream</Heading>
@@ -95,6 +169,7 @@ const Stream = () => {
         background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
         _focus={{ boxShadow: 'none' }}
       />
+      { user && <button>user login: {JSON.stringify(user)}</button>}
     </Stack>
   );
 };
