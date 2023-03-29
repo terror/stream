@@ -45,7 +45,7 @@ export const Stream = () => {
       setPosts(
         await fetchClient.getData<PostType[]>(
           query === ''
-            ? `/posts?limit=${limit}?offset=${0}`
+            ? `/posts?limit=${limit}&offset=${0}`
             : `/search?query=${query}`
         )
       );
