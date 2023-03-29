@@ -37,7 +37,7 @@ export const Stream = () => {
 
   useEffect(() => {
     fetchClient
-      .getData<PostType[]>('/posts')
+      .getData<PostType[]>(`/posts?limit=${limit}`)
       .then((data) => {
         setPosts(data);
       })
@@ -49,7 +49,7 @@ export const Stream = () => {
       setPosts(
         await fetchClient.getData<PostType[]>(
           query === ''
-            ? `/posts?limit=${limit}&offset=${0}`
+            ? `/posts?limit=${limit}`
             : `/search?query=${encodeURIComponent(query)}`
         )
       );
