@@ -25,6 +25,20 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
+type User = {
+  id: number;
+  login: string;
+  name: string;
+  bio?: string;
+  avatar_url?: string;
+  url?: string;
+  is_admin?: boolean;
+};
+
+type UserResponse = {
+  user: User;
+};
+
 const fetchClient = {
   async get(endpoint: string, init?: RequestInit) {
     return fetch('/api' + endpoint, init);
@@ -41,20 +55,6 @@ const fetchClient = {
   },
 };
 
-type User = {
-  id: number;
-  login: string;
-  name: string;
-  bio?: string;
-  avatar_url?: string;
-  url?: string;
-  is_admin: boolean;
-};
-
-type UserResponse = {
-  user: User;
-};
-
 export const AuthContext = createContext<User | undefined>(undefined);
 
 export const AuthProvider = ({ children }: PropsWithChildren<any>) => {
@@ -66,6 +66,7 @@ export const AuthProvider = ({ children }: PropsWithChildren<any>) => {
     fetchClient
       .getData<UserResponse>('/user', { credentials: 'include' })
       .then((data) => {
+        console.log(data);
         setUser(data.user);
         setLoading(false);
       });
@@ -121,7 +122,7 @@ const Navbar = () => {
           <ModalBody mb='4'>
             <Stack spacing='20px'>
               <Text fontWeight='medium'>
-                The 'stream' provides a serene abode for me to articulate my
+                The stream provides a serene abode for me to articulate my
                 thoughts, unencumbered by the cacophonous clamor prevalent on
                 platforms such as Twitter. My motivation to create this virtual
                 sanctuary was kindled by the captivating essence of Linus Lee's
@@ -129,6 +130,7 @@ const Navbar = () => {
                 <Link href='https://stream.thesephist.com/' target='_blank'>
                   https://stream.thesephist.com/
                 </Link>
+                .
               </Text>
               .
               <Text fontWeight='medium'>
@@ -157,6 +159,8 @@ const Stream = () => {
   const { colorMode } = useColorMode();
 
   const user = useAuth();
+
+  console.log(user);
 
   return (
     <Stack p='4'>

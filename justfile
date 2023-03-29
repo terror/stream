@@ -1,3 +1,11 @@
+set dotenv-load
+
+export EDITOR := 'nvim'
+export RUST_LOG := 'debug'
+
+alias f := fmt
+alias r := run
+
 default:
   just --list
 

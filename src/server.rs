@@ -17,8 +17,8 @@ impl Server {
     axum_server::Server::bind(addr)
       .serve(
         Router::new()
-          .route("/auth/authorized", get(auth::login))
-          .route("/auth/login", get(auth::authorized))
+          .route("/auth/authorized", get(auth::authorized))
+          .route("/auth/login", get(auth::login))
           .route("/auth/logout", get(auth::logout))
           .route("/post", post(post::add_post))
           .route("/user", get(user::get_user))

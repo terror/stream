@@ -38,7 +38,13 @@ impl State {
         env::var("REDIRECT_URL")
           .unwrap_or_else(|_| "http://127.0.0.1:8000/auth/authorized".into()),
       )?),
-      request_client: reqwest::Client::new(),
+      request_client: reqwest::Client::builder()
+        .user_agent(format!(
+          "{}/{}",
+          env!("CARGO_PKG_NAME"),
+          env!("CARGO_PKG_VERSION")
+        ))
+        .build()?,
       session_store: MongodbSessionStore::new(
         "mongodb://127.0.0.1:27017",
         db_name,
