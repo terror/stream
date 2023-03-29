@@ -1,5 +1,7 @@
 import {
+  Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Input,
@@ -9,11 +11,13 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
   Textarea,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
 import { fetchClient } from '../lib/fetchClient';
+import { Markdown } from './Markdown';
 
 interface PostFormProps {
   isOpen: boolean;
@@ -57,13 +61,22 @@ export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
                 onChange={(event) => setTitle(event.target.value)}
               />
             </FormControl>
-            <FormControl id='content' mb={4}>
-              <FormLabel>Content</FormLabel>
-              <Textarea
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-              />
-            </FormControl>
+            <Flex direction='row' overflow='auto'>
+              <FormControl id='content' mb={4} w='50%' m='2'>
+                <FormLabel>Content</FormLabel>
+                <Textarea
+                  value={content}
+                  onChange={(event) => setContent(event.target.value)}
+                  isRequired
+                />
+              </FormControl>
+              <Box w='50%' m='2'>
+                <Text fontWeight='medium' mb='4'>
+                  Preview
+                </Text>
+                <Markdown content={content} />
+              </Box>
+            </Flex>
             <FormControl id='title' mb={4}>
               <FormLabel>Tags</FormLabel>
               <Input
@@ -72,7 +85,9 @@ export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
                 onChange={(event) => setTags(event.target.value)}
               />
             </FormControl>
-            <Button type='submit'>Submit</Button>
+            <Button mt='4' type='submit'>
+              Publish
+            </Button>
           </form>
         </ModalBody>
       </ModalContent>

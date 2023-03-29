@@ -1,14 +1,8 @@
 import { Flex, HStack, Stack, Text } from '@chakra-ui/react';
-import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
-import 'katex/dist/katex.min.css';
-import ReactMarkdown from 'react-markdown';
-import rehypeHighlight from 'rehype-highlight';
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 
 import { formatDate } from '../lib/formatDate';
 import { Post as PostType } from '../model/Post';
+import { Markdown } from './Markdown';
 
 export const Post: React.FC<PostType> = ({
   title,
@@ -23,13 +17,7 @@ export const Post: React.FC<PostType> = ({
       </Text>
       <Stack>
         {title && <Text fontWeight='bold'>{title}</Text>}
-        <ReactMarkdown
-          children={content}
-          components={ChakraUIRenderer()}
-          rehypePlugins={[rehypeKatex, rehypeHighlight]}
-          remarkPlugins={[remarkGfm, remarkMath]}
-          skipHtml
-        />
+        <Markdown content={content} />
         <HStack>
           {tags.map(
             (tag, i) =>
