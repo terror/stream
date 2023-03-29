@@ -8,10 +8,17 @@ pub(crate) struct Post {
   pub(crate) tags: Vec<String>,
 }
 
+#[derive(Deserialize)]
+pub(crate) struct GetPostsParams {
+  limit: Option<i64>,
+  offset: Option<u64>,
+}
+
 pub(crate) async fn get_posts(
+  Query(params): Query<GetPostsParams>,
   AppState(db): AppState<Arc<Db>>,
 ) -> Result<impl IntoResponse> {
-  Ok(Json(db.posts().await?))
+  Ok(Json(db.posts(params.limit, params.offset).await?))
 }
 
 #[derive(Debug, Deserialize)]

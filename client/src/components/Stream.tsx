@@ -1,13 +1,16 @@
 import {
   Button,
+  Center,
   Flex,
   Heading,
   Input,
+  Spinner,
   Stack,
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
 import { Fragment, useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
@@ -16,6 +19,11 @@ import { Post } from './Post';
 import { PostForm } from './PostForm';
 
 export const Stream = () => {
+  const limit = 20;
+
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(limit);
+
   const user = useAuth();
 
   const { colorMode } = useColorMode();
@@ -27,7 +35,6 @@ export const Stream = () => {
     fetchClient
       .getData<PostType[]>('/posts')
       .then((data) => {
-        console.log(data);
         setPosts(data);
       })
       .catch((err) => console.error(err));
@@ -36,12 +43,26 @@ export const Stream = () => {
   const handleInputChange = async (query: string) => {
     try {
       setPosts(
-        query === ''
-          ? await fetchClient.getData<PostType[]>(`/posts`)
-          : await fetchClient.getData<PostType[]>(`/search?query=${query}`)
+        await fetchClient.getData<PostType[]>(
+          query === ''
+            ? `/posts?limit=${limit}?offset=${0}`
+            : `/search?query=${query}`
+        )
       );
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const fetchMore = async () => {
+    const batch = await fetchClient.getData<PostType[]>(
+      `/posts?limit=${limit}&offset=${offset}`
+    );
+
+    if (batch.length === 0) setHasMore(false);
+    else {
+      setPosts(posts.concat(batch));
+      setOffset(offset + limit);
     }
   };
 
@@ -73,15 +94,27 @@ export const Stream = () => {
         _focus={{ boxShadow: 'none' }}
         onChange={(e) => handleInputChange(e.target.value)}
       />
-      {posts.map((post, i) => (
-        <Post
-          key={i}
-          title={post.title}
-          timestamp={post.timestamp}
-          content={post.content}
-          tags={post.tags}
-        />
-      ))}
+      <InfiniteScroll
+        dataLength={posts.length}
+        hasMore={hasMore}
+        loader={
+          <Center mt='4'>
+            <Spinner />
+          </Center>
+        }
+        next={fetchMore}
+        style={{ overflowY: 'hidden' }}
+      >
+        {posts.map((post, i) => (
+          <Post
+            key={i}
+            title={post.title}
+            timestamp={post.timestamp}
+            content={post.content}
+            tags={post.tags}
+          />
+        ))}
+      </InfiniteScroll>
     </Stack>
   );
 };

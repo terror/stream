@@ -89,7 +89,11 @@ impl Db {
     }
   }
 
-  pub(crate) async fn posts(&self) -> Result<Vec<Post>> {
+  pub(crate) async fn posts(
+    &self,
+    limit: Option<i64>,
+    offset: Option<u64>,
+  ) -> Result<Vec<Post>> {
     Ok(
       self
         .database
@@ -97,6 +101,8 @@ impl Db {
         .find(
           None,
           FindOptions::builder()
+            .skip(offset)
+            .limit(limit)
             .sort(doc! { "timestamp": -1 })
             .build(),
         )
@@ -205,17 +211,17 @@ mod tests {
   async fn on_disk_database_is_persistent() {
     let TestContext { db, db_name } = TestContext::new().await;
 
-    assert_eq!(db.posts().await.unwrap().len(), 0);
+    assert_eq!(db.posts(None, None).await.unwrap().len(), 0);
 
     db.add_post(Post::default()).await.unwrap();
 
-    assert_eq!(db.posts().await.unwrap().len(), 1);
+    assert_eq!(db.posts(None, None).await.unwrap().len(), 1);
 
     drop(db);
 
     let db = Db::connect(&db_name).await.unwrap();
 
-    assert_eq!(db.posts().await.unwrap().len(), 1);
+    assert_eq!(db.posts(None, None).await.unwrap().len(), 1);
   }
 
   #[tokio::test(flavor = "multi_thread")]
@@ -244,7 +250,7 @@ mod tests {
     .await
     .unwrap();
 
-    let posts = db.posts().await.unwrap();
+    let posts = db.posts(None, None).await.unwrap();
 
     assert_eq!(posts.len(), 3);
     assert_eq!(posts.last().unwrap().content, "baz");

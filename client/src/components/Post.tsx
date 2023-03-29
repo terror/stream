@@ -23,7 +23,7 @@ export const Post: React.FC<PostType> = ({
             (tag, i) =>
               tag && (
                 <Text fontSize='sm' fontWeight='medium' p='1' key={i}>
-                  #{tag}
+                  {tag}
                 </Text>
               )
           )}
