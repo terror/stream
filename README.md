@@ -1,6 +1,10 @@
 **stream** bestows a tranquil haven where my thoughts can unfurl, unhampered by
 the dissonance of bustling platforms like Twitter.
 
+<div align='center'>
+  <img width='500px' src='https://user-images.githubusercontent.com/31192478/228690438-cbb71abb-c829-4eb2-aff6-1e7ec1fb585e.png'/>
+</div>
+
 ### Development
 
 First, mount a local mongodb instance with docker:
