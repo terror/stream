@@ -12,6 +12,12 @@ pub(crate) struct User {
   pub(crate) url: Option<String>,
 }
 
+impl User {
+  pub(crate) fn is_admin(&self) -> bool {
+    ADMINS.contains(&self.id)
+  }
+}
+
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct StoredUser {
@@ -21,12 +27,6 @@ pub(crate) struct StoredUser {
   pub(crate) avatar_url: Option<String>,
   pub(crate) url: Option<String>,
   pub(crate) is_admin: bool,
-}
-
-impl User {
-  pub(crate) fn is_admin(&self) -> bool {
-    ADMINS.contains(&self.id)
-  }
 }
 
 pub(crate) async fn get_user(

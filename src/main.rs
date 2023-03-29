@@ -8,7 +8,7 @@ use {
     server::Server,
     state::State,
     subcommand::Subcommand,
-    user::{User, StoredUser}
+    user::{StoredUser, User},
   },
   anyhow::anyhow,
   async_mongodb_session::MongodbSessionStore,
