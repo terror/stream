@@ -3,7 +3,7 @@ export const fetchClient = {
     return fetch('/api' + endpoint, init);
   },
   async getData<T>(endpoint: string, init?: RequestInit) {
-    return (await (await this.get(endpoint, init)).json()) as T;
+    return JSON.parse(await (await this.get(endpoint, init)).json()) as T;
   },
   post: async (endpoint: string, data: any, init?: RequestInit) => {
     return fetch('/api' + endpoint, {

@@ -18,7 +18,7 @@ export const Stream = () => {
     <Stack p='4'>
       <Flex alignItems='center'>
         <Heading>Liam's stream</Heading>
-        {user && (
+        {user && user.isAdmin && (
           <Button
             mt='2'
             ml='2'
