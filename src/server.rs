@@ -17,6 +17,7 @@ impl Server {
     axum_server::Server::bind(addr)
       .serve(
         Router::new()
+          .route("/user", get(user::get_user))
           .with_state(State::new(&self.db_name).await?)
           .layer(CorsLayer::very_permissive())
           .into_make_service(),

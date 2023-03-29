@@ -1,0 +1,69 @@
+use super::*;
+
+const ADMINS: [u64; 1] = [31192478];
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub(crate) struct User {
+  pub(crate) id: u64,
+  pub(crate) login: String,
+  pub(crate) name: String,
+  pub(crate) bio: Option<String>,
+  pub(crate) avatar_url: Option<String>,
+  pub(crate) url: Option<String>,
+  pub(crate) is_admin: Option<bool>,
+}
+
+impl User {
+  pub(crate) fn is_admin(&self) -> bool {
+    ADMINS.contains(&self.id)
+  }
+}
+
+#[derive(Serialize, Deserialize)]
+struct UserResponse {
+  user: Option<User>,
+}
+
+pub(crate) async fn get_user(user: Option<User>) -> impl IntoResponse {
+  Json(UserResponse { user })
+}
+
+#[async_trait]
+impl<S, B> FromRequest<S, B> for User
+where
+  B: Send + 'static,
+  S: Send + Sync,
+  MongodbSessionStore: FromRef<S>,
+{
+  type Rejection = AuthRedirect;
+
+  async fn from_request(
+    req: Request<B>,
+    state: &S,
+  ) -> Result<Self, Self::Rejection> {
+    let session_store = MongodbSessionStore::from_ref(state);
+
+    let cookies = req
+      .into_parts()
+      .0
+      .extract::<TypedHeader<Cookie>>()
+      .await
+      .map_err(|err| match *err.name() {
+        header::COOKIE => match err.reason() {
+          TypedHeaderRejectionReason::Missing => AuthRedirect,
+          _ => panic!("Unexpected error getting cookies: {err}"),
+        },
+        _ => panic!("Unexpected error getting cookies: {err}"),
+      })?;
+
+    Ok(
+      session_store
+        .load_session(cookies.get(COOKIE_NAME).ok_or(AuthRedirect)?.to_string())
+        .await
+        .unwrap()
+        .ok_or(AuthRedirect)?
+        .get::<User>("user")
+        .ok_or(AuthRedirect)?,
+    )
+  }
+}

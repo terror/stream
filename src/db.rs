@@ -28,4 +28,14 @@ impl Db {
       database: client.database(db_name),
     })
   }
+
+  pub(crate) async fn add_post(&self, post: Post) -> Result<InsertOneResult> {
+    Ok(
+      self
+        .database
+        .collection(Db::POST_COLLECTION)
+        .insert_one(post, None)
+        .await?,
+    )
+  }
 }
