@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsc && vite build",
     "dev": "vite",
+    "format": "prettier --write .",
+    "format-check": "prettier --check .",
     "lint": "tslint -c tslint.json 'client/**/{*.ts,*.tsx}'",
     "preview": "vite preview"
   },

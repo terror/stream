@@ -11,11 +11,11 @@ clippy:
 
 fmt:
   cargo fmt
-  prettier --write .
+  npm run format
 
 fmt-check:
   cargo fmt --all -- --check
-  prettier --check .
+  npm run format-check
 
 forbid:
   ./bin/forbid
