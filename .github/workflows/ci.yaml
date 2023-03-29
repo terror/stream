@@ -45,6 +45,12 @@ jobs:
       - name: Install client dependencies
         run: npm ci
 
+      - name: Install mongodb
+        run: |
+          brew tap mongodb/brew
+          brew install mongodb-community@6.0
+          brew services start mongodb-community@6.0
+
       - name: Info
         run: |
           rustup --version
@@ -73,3 +79,6 @@ jobs:
 
       - name: Check typescript formatting
         run: npm run format-check
+
+      - name: Test
+        run: cargo test --workspace --all-features --all-targets
