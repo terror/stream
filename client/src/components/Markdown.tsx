@@ -1,7 +1,6 @@
 import 'katex/dist/katex.min.css';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -16,7 +15,7 @@ export const Markdown: React.FC<MarkdownProps> = ({ content }) => (
   <ReactMarkdown
     children={content}
     components={Renderer()}
-    rehypePlugins={[rehypeKatex, rehypeHighlight]}
+    rehypePlugins={[rehypeKatex]}
     remarkPlugins={[remarkGfm, remarkMath]}
     skipHtml
   />
