@@ -72,8 +72,6 @@ mod state;
 mod subcommand;
 mod user;
 
-const CLIENT_URL: &str = "http://127.0.0.1:5173";
-
 type Result<T = (), E = Error> = std::result::Result<T, E>;
 
 #[tokio::main]
