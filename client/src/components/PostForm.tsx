@@ -17,27 +17,53 @@ import {
 import React, { useState } from 'react';
 
 import { fetchClient } from '../lib/fetchClient';
+import { Post as PostType } from '../model/Post';
 import { Markdown } from './Markdown';
 
 interface PostFormProps {
+  context: PostFormContext;
   isOpen: boolean;
   onClose: () => void;
+  post?: PostType;
 }
 
-export const PostForm: React.FC<PostFormProps> = ({ isOpen, onClose }) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [tags, setTags] = useState('');
+export enum PostFormContext {
+  Add,
+  Update,
+}
+
+export const PostForm: React.FC<PostFormProps> = ({
+  context,
+  isOpen,
+  onClose,
+  post,
+}) => {
+  const [title, setTitle] = useState(post?.title || '');
+  const [content, setContent] = useState(post?.content || '');
+  const [tags, setTags] = useState<string>(post?.tags.join(' ') || '');
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
+    const data = {
+      title,
+      content,
+      tags:
+        tags.length === 0
+          ? []
+          : tags
+              .split(' ')
+              .map((tag) => (tag.startsWith('#') ? tag : `#${tag}`)),
+    };
+
     try {
-      await fetchClient.post('/posts', {
-        title,
-        content,
-        tags: tags.length === 0 ? [] : tags.split(' ').map((tag) => `#${tag}`),
-      });
+      context === PostFormContext.Add
+        ? await fetchClient.post('/posts', data)
+        : await fetchClient.put('/posts', {
+            _id: post?._id,
+            timestamp: post?.timestamp,
+            ...data,
+          });
     } catch (err) {
       console.error(err);
     }

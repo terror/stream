@@ -1,19 +1,29 @@
-import { DeleteIcon } from '@chakra-ui/icons';
-import { Flex, HStack, IconButton, Link, Stack, Text } from '@chakra-ui/react';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import {
+  Flex,
+  HStack,
+  IconButton,
+  Link,
+  Stack,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
 import { formatDate } from '../lib/formatDate';
 import { Post as PostType } from '../model/Post';
 import { Markdown } from './Markdown';
+import { PostForm, PostFormContext } from './PostForm';
 
-interface PostProps {
+interface ControlsProps {
   post: PostType;
-  onTagClick: (tag: string) => void;
 }
 
-export const Post: React.FC<PostProps> = ({ post, onTagClick }) => {
+const Controls: React.FC<ControlsProps> = ({ post }) => {
   const user = useAuth();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDelete = async () => {
     try {
@@ -23,6 +33,41 @@ export const Post: React.FC<PostProps> = ({ post, onTagClick }) => {
     }
   };
 
+  return (
+    user &&
+    user.isAdmin && (
+      <Stack ml='auto'>
+        <IconButton
+          aria-label='edit'
+          background='transparent'
+          icon={<EditIcon />}
+          onClick={onOpen}
+          size='sm'
+        />
+        <IconButton
+          aria-label='delete'
+          background='transparent'
+          icon={<DeleteIcon />}
+          onClick={handleDelete}
+          size='sm'
+        />
+        <PostForm
+          context={PostFormContext.Update}
+          post={post}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
+      </Stack>
+    )
+  );
+};
+
+interface PostProps {
+  post: PostType;
+  onTagClick: (tag: string) => void;
+}
+
+export const Post: React.FC<PostProps> = ({ post, onTagClick }) => {
   return (
     <Flex p='2' key={post.timestamp} alignItems='flex-start'>
       <Text mt='0.5' mr='4' fontSize='sm' fontWeight='medium' flexShrink={0}>
@@ -49,18 +94,7 @@ export const Post: React.FC<PostProps> = ({ post, onTagClick }) => {
           )}
         </HStack>
       </Stack>
-      {user && user.isAdmin && (
-        <IconButton
-          background='transparent'
-          onClick={handleDelete}
-          aria-label='delete'
-          icon={<DeleteIcon />}
-          size='sm'
-          ml='auto'
-        >
-          Delete
-        </IconButton>
-      )}
+      <Controls post={post} />
     </Flex>
   );
 };

@@ -18,7 +18,7 @@ import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
 import { Post as PostType } from '../model/Post';
 import { Post } from './Post';
-import { PostForm } from './PostForm';
+import { PostForm, PostFormContext } from './PostForm';
 
 export const Stream = () => {
   const limit = 20;
@@ -92,7 +92,11 @@ export const Stream = () => {
             >
               +
             </IconButton>
-            <PostForm isOpen={isOpen} onClose={onClose} />
+            <PostForm
+              context={PostFormContext.Add}
+              isOpen={isOpen}
+              onClose={onClose}
+            />
           </Fragment>
         )}
       </Flex>
