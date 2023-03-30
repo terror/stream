@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub(crate) struct Post {
   #[serde(rename = "_id")]
   pub(crate) id: String,

@@ -69,11 +69,14 @@ impl Db {
         .database
         .collection::<Post>(Db::POST_COLLECTION)
         .update_one(
-          doc! { "timestamp": post.timestamp },
+          doc! { "_id": post.id },
           UpdateModifications::Document(doc! {
-            "title" : post.title,
-            "content": post.content,
-            "tags": post.tags
+            "$set": {
+              "title" : post.title,
+              "timestamp": Utc::now().format("%Y-%m-%dT%H:%M:%S%.6fZ").to_string(),
+              "content": post.content,
+              "tags": post.tags
+            }
           }),
           None,
         )
@@ -240,6 +243,36 @@ mod tests {
     }
   }
 
+  fn id() -> String {
+    Uuid::new_v4().to_string()
+  }
+
+  fn posts() -> Vec<Post> {
+    vec![
+      Post {
+        id: id(),
+        title: None,
+        content: "foo".into(),
+        timestamp: Utc::now(),
+        tags: vec!["#math".into(), "#code".into()],
+      },
+      Post {
+        id: id(),
+        title: None,
+        content: "bar".into(),
+        timestamp: Utc::now(),
+        tags: vec!["#math".into(), "#code".into()],
+      },
+      Post {
+        id: id(),
+        title: Some("baz".into()),
+        content: "quux".into(),
+        timestamp: Utc::now(),
+        tags: vec!["#math".into(), "#code".into()],
+      },
+    ]
+  }
+
   #[tokio::test(flavor = "multi_thread")]
   async fn on_disk_database_is_persistent() {
     let TestContext { db, db_name } = TestContext::new().await;
@@ -258,28 +291,30 @@ mod tests {
   }
 
   #[tokio::test(flavor = "multi_thread")]
-  async fn posts_are_sorted_by_timestamp_descending() {
+  async fn posts_are_sorted_by_timestamp_ascending() {
     let TestContext { db, .. } = TestContext::new().await;
 
     let now = Utc::now();
 
-    for content in ["foo", "bar"] {
-      db.add_post(Post {
-        id: Uuid::new_v4().to_string(),
-        title: None,
-        content: content.to_string(),
-        timestamp: Utc::now(),
-        tags: vec![],
-      })
-      .await
-      .unwrap();
+    for post in posts() {
+      db.add_post(post).await.unwrap();
     }
 
     db.add_post(Post {
-      id: Uuid::new_v4().to_string(),
+      id: id(),
       title: None,
-      content: "baz".to_string(),
+      content: "last".to_string(),
       timestamp: now,
+      tags: vec![],
+    })
+    .await
+    .unwrap();
+
+    db.add_post(Post {
+      id: id(),
+      title: None,
+      content: "first".to_string(),
+      timestamp: Utc::now(),
       tags: vec![],
     })
     .await
@@ -287,7 +322,67 @@ mod tests {
 
     let posts = db.posts(None, None).await.unwrap();
 
-    assert_eq!(posts.len(), 3);
-    assert_eq!(posts.last().unwrap().content, "baz");
+    assert_eq!(posts.len(), 5);
+
+    assert_eq!(posts.first().unwrap().content, "first");
+    assert_eq!(posts.last().unwrap().content, "last");
+  }
+
+  #[tokio::test(flavor = "multi_thread")]
+  async fn delete_post() {
+    let TestContext { db, .. } = TestContext::new().await;
+
+    let posts = posts();
+
+    for post in &posts {
+      db.add_post(post.clone()).await.unwrap();
+    }
+
+    assert_eq!(
+      db.delete_post(posts.first().unwrap().id.clone())
+        .await
+        .unwrap()
+        .deleted_count,
+      1
+    );
+
+    assert_eq!(
+      db.delete_post(posts.first().unwrap().id.clone())
+        .await
+        .unwrap()
+        .deleted_count,
+      0
+    );
+  }
+
+  #[tokio::test(flavor = "multi_thread")]
+  async fn update_post() {
+    let TestContext { db, .. } = TestContext::new().await;
+
+    let posts = posts();
+
+    for post in &posts {
+      db.add_post(post.clone()).await.unwrap();
+    }
+
+    assert_eq!(
+      db.update_post(Post {
+        id: posts.first().unwrap().id.clone(),
+        title: None,
+        content: "updated".into(),
+        timestamp: Utc::now(),
+        tags: vec![]
+      })
+      .await
+      .unwrap()
+      .modified_count,
+      1
+    );
+
+    let posts = db.posts(None, None).await.unwrap();
+
+    let updated = posts.first().unwrap();
+
+    assert_eq!(updated.content, "updated");
   }
 }
