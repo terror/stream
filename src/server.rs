@@ -2,6 +2,8 @@ use super::*;
 
 #[derive(Parser)]
 pub(crate) struct Server {
+  #[clap(long, default_value = "client/dist")]
+  assets: PathBuf,
   #[clap(long, default_value = "stream")]
   db_name: String,
   #[clap(long, default_value = "8000")]
@@ -24,6 +26,8 @@ impl Server {
       }
     });
 
+    let serve_dir = get_service(ServeDir::new(self.assets));
+
     axum_server::Server::bind(addr)
       .serve(
         Router::new()
@@ -36,6 +40,8 @@ impl Server {
           .route("/posts", put(posts::update_post))
           .route("/search", get(search::search))
           .route("/user", get(user::get_user))
+          .nest_service("/assets", serve_dir.clone())
+          .fallback_service(serve_dir)
           .with_state(State::new(&self.db_name, db).await?)
           .layer(CorsLayer::very_permissive())
           .into_make_service(),
