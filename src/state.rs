@@ -4,7 +4,7 @@ use super::*;
 pub(crate) struct State {
   pub(crate) db: Arc<Db>,
   pub(crate) client_url: String,
-  pub(crate) oauth_client: BasicClient,
+  pub(crate) github_oauth_client: BasicClient,
   pub(crate) request_client: reqwest::Client,
   pub(crate) session_store: MongodbSessionStore,
 }
@@ -28,19 +28,16 @@ impl State {
       client_url: env::var("CLIENT_URL")
         .unwrap_or("http://127.0.0.1:5173".into())
         .to_string(),
-      oauth_client: BasicClient::new(
-        ClientId::new(env::var("CLIENT_ID")?),
-        Some(ClientSecret::new(env::var("CLIENT_SECRET")?)),
-        AuthUrl::new(env::var("AUTH_URL").unwrap_or_else(|_| {
-          "https://github.com/login/oauth/authorize".into()
-        }))?,
-        Some(TokenUrl::new(env::var("TOKEN_URL").unwrap_or_else(|_| {
-          "https://github.com/login/oauth/access_token".into()
-        }))?),
+      github_oauth_client: BasicClient::new(
+        ClientId::new(env::var("GITHUB_CLIENT_ID")?),
+        Some(ClientSecret::new(env::var("GITHUB_CLIENT_SECRET")?)),
+        AuthUrl::new("https://github.com/login/oauth/authorize".into())?,
+        Some(TokenUrl::new(
+          "https://github.com/login/oauth/access_token".into(),
+        )?),
       )
       .set_redirect_uri(RedirectUrl::new(
-        env::var("REDIRECT_URL")
-          .unwrap_or_else(|_| "http://127.0.0.1:8000/auth/authorized".into()),
+        "http://127.0.0.1:8000/auth/authorized".into(),
       )?),
       request_client: reqwest::Client::builder()
         .user_agent(format!(

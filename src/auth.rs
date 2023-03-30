@@ -22,7 +22,7 @@ pub(crate) async fn login(
 ) -> impl IntoResponse {
   Redirect::to(
     state
-      .oauth_client
+      .github_oauth_client
       .authorize_url(CsrfToken::new_random)
       .url()
       .0
@@ -37,7 +37,7 @@ pub(crate) async fn authorized(
   debug!("Fetching token from oauth client...");
 
   let token = state
-    .oauth_client
+    .github_oauth_client
     .exchange_code(AuthorizationCode::new(query.code))
     .request_async(async_http_client)
     .await?;
