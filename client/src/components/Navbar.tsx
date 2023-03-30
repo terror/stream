@@ -48,7 +48,7 @@ export const Navbar = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>About</ModalHeader>
+          <ModalHeader mb='-4'>About</ModalHeader>
           <ModalCloseButton />
           <ModalBody mb='4'>
             <Stack spacing='20px'>
