@@ -4,7 +4,7 @@ use {
     auth::{AuthRedirect, COOKIE_NAME},
     db::Db,
     error::Error,
-    posts::Post,
+    post::Post,
     server::Server,
     state::State,
     subcommand::Subcommand,
@@ -53,6 +53,7 @@ use {
     sync::Arc,
   },
   tower_http::cors::CorsLayer,
+  uuid::Uuid,
 };
 
 #[cfg(test)]
@@ -62,6 +63,7 @@ mod arguments;
 mod auth;
 mod db;
 mod error;
+mod post;
 mod posts;
 mod search;
 mod server;

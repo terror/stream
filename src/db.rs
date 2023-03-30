@@ -81,17 +81,14 @@ impl Db {
     )
   }
 
-  pub(crate) async fn delete_post(
-    &self,
-    timestamp: DateTime<Utc>,
-  ) -> Result<DeleteResult> {
+  pub(crate) async fn delete_post(&self, id: String) -> Result<DeleteResult> {
     Ok(
       self
         .database
         .collection::<Post>(Db::POST_COLLECTION)
         .delete_one(
           doc! {
-            "timestamp": timestamp
+            "_id": id
           },
           None,
         )
@@ -268,6 +265,7 @@ mod tests {
 
     for content in ["foo", "bar"] {
       db.add_post(Post {
+        id: Uuid::new_v4().to_string(),
         title: None,
         content: content.to_string(),
         timestamp: Utc::now(),
@@ -278,6 +276,7 @@ mod tests {
     }
 
     db.add_post(Post {
+      id: Uuid::new_v4().to_string(),
       title: None,
       content: "baz".to_string(),
       timestamp: now,

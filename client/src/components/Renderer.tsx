@@ -70,7 +70,7 @@ export const defaults: Defaults = {
 
     return (
       <Code
-        overflow='scroll'
+        overflow='auto'
         className={className}
         p='2'
         borderRadius='md'

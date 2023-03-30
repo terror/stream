@@ -106,21 +106,23 @@ export const Stream = () => {
         ref={value}
         onChange={(e) => handleInputChange(e.target.value)}
       />
-      <InfiniteScroll
-        dataLength={posts.length}
-        hasMore={hasMore}
-        loader={
-          <Center mt='4'>
-            <Spinner />
-          </Center>
-        }
-        next={fetchMore}
-        style={{ overflowY: 'hidden' }}
-      >
-        {posts.map((post, i) => (
-          <Post key={i} post={post} onTagClick={handleTagClick} />
-        ))}
-      </InfiniteScroll>
+      {posts.length !== 0 && (
+        <InfiniteScroll
+          dataLength={posts.length}
+          hasMore={hasMore}
+          loader={
+            <Center mt='4'>
+              <Spinner />
+            </Center>
+          }
+          next={fetchMore}
+          style={{ overflowY: 'hidden' }}
+        >
+          {posts.map((post, i) => (
+            <Post key={i} post={post} onTagClick={handleTagClick} />
+          ))}
+        </InfiniteScroll>
+      )}
     </Stack>
   );
 };

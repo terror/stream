@@ -17,7 +17,7 @@ export const Post: React.FC<PostProps> = ({ post, onTagClick }) => {
 
   const handleDelete = async () => {
     try {
-      await fetchClient.delete(`/posts?timestamp=${post.timestamp}`);
+      await fetchClient.delete(`/posts?id=${post._id}`);
     } catch (err) {
       console.error(err);
     }

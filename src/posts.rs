@@ -1,13 +1,5 @@
 use super::*;
 
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub(crate) struct Post {
-  pub(crate) title: Option<String>,
-  pub(crate) timestamp: DateTime<Utc>,
-  pub(crate) content: String,
-  pub(crate) tags: Vec<String>,
-}
-
 #[derive(Deserialize)]
 pub(crate) struct GetPostsParams {
   limit: Option<i64>,
@@ -46,6 +38,7 @@ pub(crate) async fn add_post(
   debug!("Adding post to database...");
 
   db.add_post(Post {
+    id: Uuid::new_v4().to_string(),
     title,
     timestamp: Utc::now(),
     content,
@@ -78,7 +71,7 @@ pub(crate) async fn update_post(
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct DeletePostParams {
-  timestamp: DateTime<Utc>,
+  id: String,
 }
 
 pub(crate) async fn delete_post(
@@ -92,7 +85,7 @@ pub(crate) async fn delete_post(
     return Err(Error(anyhow!("Must be admin to delete posts")));
   }
 
-  db.delete_post(params.timestamp).await?;
+  db.delete_post(params.id).await?;
 
   debug!("Post deleted successfully.");
 
