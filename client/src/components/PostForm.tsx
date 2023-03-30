@@ -17,6 +17,7 @@ import {
 import React, { useState } from 'react';
 
 import { fetchClient } from '../lib/fetchClient';
+import { makeTags } from '../lib/utils';
 import { Post as PostType } from '../model/Post';
 import { Markdown } from './Markdown';
 
@@ -48,22 +49,17 @@ export const PostForm: React.FC<PostFormProps> = ({
     const data = {
       title,
       content,
-      tags:
-        tags.length === 0
-          ? []
-          : tags
-              .split(' ')
-              .map((tag) => (tag.startsWith('#') ? tag : `#${tag}`)),
+      tags: makeTags(tags),
     };
 
     try {
-      context === PostFormContext.Add
-        ? await fetchClient.post('/posts', data)
-        : await fetchClient.put('/posts', {
+      context === PostFormContext.Update
+        ? await fetchClient.put('/posts', {
             _id: post?._id,
             timestamp: post?.timestamp,
             ...data,
-          });
+          })
+        : await fetchClient.post('/posts', data);
     } catch (err) {
       console.error(err);
     }
