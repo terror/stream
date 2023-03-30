@@ -10,12 +10,12 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import { Markdown } from './Markdown';
-import { Post as PostType } from '../model/Post';
-import { PostForm, PostFormContext } from './PostForm';
+import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
 import { formatDate } from '../lib/utils';
-import { useAuth } from '../hooks/useAuth';
+import { Post as PostType } from '../model/Post';
+import { Markdown } from './Markdown';
+import { PostForm, PostFormContext } from './PostForm';
 
 interface PostProps {
   post: PostType;
