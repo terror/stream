@@ -21,7 +21,7 @@ use {
     headers::Cookie,
     response::{IntoResponse, Redirect, Response, TypedHeader},
     routing::Router,
-    routing::{delete, get, post, put},
+    routing::{delete, get, get_service, post, put},
     Json, RequestPartsExt,
   },
   chrono::prelude::*,
@@ -49,10 +49,11 @@ use {
     env,
     fmt::{self, Display, Formatter},
     net::SocketAddr,
+    path::PathBuf,
     process,
     sync::Arc,
   },
-  tower_http::cors::CorsLayer,
+  tower_http::{cors::CorsLayer, services::ServeDir},
   uuid::Uuid,
 };
 
