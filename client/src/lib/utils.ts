@@ -9,3 +9,9 @@ export const formatDate = (date: string) => {
     hour12: true,
   }).format(new Date(date));
 };
+
+export const makeTags = (tags: string) => {
+  return tags.length === 0
+    ? []
+    : tags.split(' ').map((tag) => (tag.startsWith('#') ? tag : `#${tag}`));
+};
