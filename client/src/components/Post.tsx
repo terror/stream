@@ -4,6 +4,7 @@ import {
   HStack,
   IconButton,
   Link,
+  SimpleGrid,
   Stack,
   Text,
   useDisclosure,
@@ -36,7 +37,7 @@ const Controls: React.FC<ControlsProps> = ({ post }) => {
   return (
     user &&
     user.isAdmin && (
-      <Stack ml='auto'>
+      <HStack alignSelf='end'>
         <IconButton
           aria-label='edit'
           background='transparent'
@@ -57,7 +58,7 @@ const Controls: React.FC<ControlsProps> = ({ post }) => {
           isOpen={isOpen}
           onClose={onClose}
         />
-      </Stack>
+      </HStack>
     )
   );
 };
@@ -69,32 +70,34 @@ interface PostProps {
 
 export const Post: React.FC<PostProps> = ({ post, onTagClick }) => {
   return (
-    <Flex p='2' key={post.timestamp} alignItems='flex-start'>
-      <Text mt='0.5' mr='4' fontSize='sm' fontWeight='medium' flexShrink={0}>
-        {formatDate(post.timestamp)}
-      </Text>
-      <Stack maxW='70%'>
-        {post.title && <Text fontWeight='bold'>{post.title}</Text>}
-        <Markdown content={post.content} />
-        <HStack>
-          {post.tags.map(
-            (tag, i) =>
-              tag && (
-                <Link
-                  fontSize='sm'
-                  fontWeight='medium'
-                  key={i}
-                  onClick={() => onTagClick(tag)}
-                  p='1'
-                  style={{ textDecoration: 'none' }}
-                >
-                  {tag}
-                </Link>
-              )
-          )}
-        </HStack>
-      </Stack>
+    <Stack>
+      <SimpleGrid columns={[1, null, 4]} key={post.timestamp} mb='4'>
+        <Text mt='0.5' mb='2' fontSize='sm' fontWeight='medium'>
+          {formatDate(post.timestamp)}
+        </Text>
+        <Stack gridColumn='span 3'>
+          {post.title && <Text fontWeight='bold'>{post.title}</Text>}
+          <Markdown content={post.content} />
+          <HStack>
+            {post.tags.map(
+              (tag, i) =>
+                tag && (
+                  <Link
+                    fontSize='sm'
+                    fontWeight='medium'
+                    key={i}
+                    onClick={() => onTagClick(tag)}
+                    p='1'
+                    style={{ textDecoration: 'none' }}
+                  >
+                    {tag}
+                  </Link>
+                )
+            )}
+          </HStack>
+        </Stack>
+      </SimpleGrid>
       <Controls post={post} />
-    </Flex>
+    </Stack>
   );
 };
