@@ -11,9 +11,9 @@ export const AuthProvider = ({ children }: PropsWithChildren<any>) => {
 
   useEffect(() => {
     fetchClient
-      .getDataParsed<User>('/user', { credentials: 'include' })
+      .getData<User>('/user', { credentials: 'include' })
       .then((data) => setUser(data))
-      .catch((err) => console.log(err))
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);
 

@@ -31,9 +31,12 @@ pub(crate) struct StoredUser {
 
 pub(crate) async fn get_user(
   AppState(db): AppState<Arc<Db>>,
-  user: User,
+  user: Option<User>,
 ) -> Result<impl IntoResponse> {
-  Ok(Json(serde_json::to_string(&db.load_user(user).await?)?))
+  match user {
+    Some(user) => Ok(Json(db.load_user(user).await?)),
+    None => Err(Error(anyhow!("User isn't logged in"))),
+  }
 }
 
 #[async_trait]

@@ -25,19 +25,31 @@ impl State {
     Ok(Self {
       db,
       oauth_client: BasicClient::new(
-        ClientId::new(env::var("CLIENT_ID")?),
-        Some(ClientSecret::new(env::var("CLIENT_SECRET")?)),
+        ClientId::new(
+          env::var("CLIENT_ID")
+            .expect("Missing CLIENT_ID environment variable."),
+        ),
+        Some(ClientSecret::new(
+          env::var("CLIENT_SECRET")
+            .expect("Missing CLIENT_SECRET environment variable."),
+        )),
         AuthUrl::new(env::var("AUTH_URL").unwrap_or_else(|_| {
           "https://github.com/login/oauth/authorize".into()
         }))?,
-        Some(TokenUrl::new(env::var("TOKEN_URL").unwrap_or_else(|_| {
-          "https://github.com/login/oauth/access_token".into()
-        }))?),
+        Some(
+          TokenUrl::new(env::var("TOKEN_URL").unwrap_or_else(|_| {
+            "https://github.com/login/oauth/access_token".into()
+          }))
+          .expect("Invalid token url."),
+        ),
       )
-      .set_redirect_uri(RedirectUrl::new(
-        env::var("REDIRECT_URL")
-          .unwrap_or_else(|_| "http://127.0.0.1:8000/auth/authorized".into()),
-      )?),
+      .set_redirect_uri(
+        RedirectUrl::new(
+          env::var("REDIRECT_URL")
+            .unwrap_or_else(|_| "http://127.0.0.1:8000/auth/authorized".into()),
+        )
+        .expect("Invalid redirect url."),
+      ),
       request_client: reqwest::Client::builder()
         .user_agent(format!(
           "{}/{}",
