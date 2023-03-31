@@ -51,6 +51,7 @@ impl State {
           .expect("Invalid token url."),
         ),
       )
+      .set_auth_type(AuthType::RequestBody)
       .set_redirect_uri(
         RedirectUrl::new(
           env::var("GITHUB_REDIRECT_URL")
