@@ -41,7 +41,7 @@ use {
     Client, Database, IndexModel,
   },
   oauth2::{
-    basic::BasicClient, reqwest::http_client, AuthUrl, AuthorizationCode,
+    basic::BasicClient, reqwest::async_http_client, AuthUrl, AuthorizationCode,
     ClientId, ClientSecret, CsrfToken, RedirectUrl, TokenResponse, TokenUrl,
   },
   serde::{Deserialize, Serialize},

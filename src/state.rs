@@ -30,7 +30,7 @@ impl State {
   pub(crate) async fn new(db: Arc<Db>) -> Result<Self> {
     Ok(Self {
       client_url: env::var("CLIENT_URL")
-        .unwrap_or_else(|_| "https://127.0.0.1:8080".into()),
+        .unwrap_or_else(|_| "http://127.0.0.1:8080".into()),
       db: db.clone(),
       oauth_client: BasicClient::new(
         ClientId::new(
