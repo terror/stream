@@ -56,20 +56,21 @@ export const Navbar = () => {
             <Stack spacing='20px'>
               <Text fontWeight='medium'>
                 As someone who values a calm and peaceful environment for
-                introspection and creativity, I find that the stream provides an
+                introspection and creativity, I built stream to provide an
                 idyllic haven to articulate my thoughts. Unlike other social
                 media platforms that can be inundated with noise and chatter,
-                the stream offers a serene space to focus and share ideas
-                without the distractions of a crowded feed.
+                the stream offers a serene space to focus and share ideas (aka
+                mostly shitposts and rants about stuff I'm working on) without
+                the distractions of a crowded feed.
               </Text>
               <Text fontWeight='medium'>
-                In fact, it was the captivating and serene nature of Linus Lee's
-                stream that inspired me to create my own virtual sanctuary. The
-                way his stream allowed for deep thinking and contemplation
-                without the typical interruptions of social media was truly
-                inspiring. If you're curious and would like to experience this
-                unique atmosphere for yourself, I highly recommend checking out
-                his stream over at{' '}
+                It was the captivating and serene nature of Linus Lee's stream
+                that inspired me to create my own virtual sanctuary. The way his
+                stream allowed for deep thinking and contemplation without the
+                typical interruptions of social media was truly inspiring. If
+                you're curious and would like to experience this unique
+                atmosphere for yourself, I highly recommend checking out his
+                stream over at{' '}
                 <Link href='https://stream.thesephist.com/' target='_blank'>
                   https://stream.thesephist.com/
                 </Link>
@@ -86,12 +87,10 @@ export const Navbar = () => {
               </Text>
               <Text fontWeight='semibold'>
                 If you're interested in exploring the code behind the stream,
-                you can find it on GitHub at{' '}
+                you can find it on Github over at{' '}
                 <Link href='https://github.com/terror/stream' target='_blank'>
                   https://github.com/terror/stream.
                 </Link>{' '}
-                I hope you'll enjoy your time here and find the same sense of
-                peace and clarity that I have found in this virtual oasis.
               </Text>
             </Stack>
           </ModalBody>
