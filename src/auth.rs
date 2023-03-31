@@ -30,17 +30,54 @@ pub(crate) async fn login(
   )
 }
 
+#[derive(Debug, Deserialize)]
+#[allow(unused)]
+struct AccessTokenResponse {
+  access_token: String,
+  token_type: String,
+  scope: String,
+}
+
+async fn request_github_access_token(
+  client_id: &str,
+  client_secret: &str,
+  code: &str,
+  redirect_url: &str,
+) -> Result<String> {
+  let client = reqwest::Client::new();
+
+  let params = [
+    ("client_id", client_id),
+    ("client_secret", client_secret),
+    ("code", code),
+    ("redirect_uri", redirect_url),
+  ];
+
+  let response = client
+    .post("https://github.com/login/oauth/access_token")
+    .form(&params)
+    .header("Accept", "application/json")
+    .send()
+    .await?;
+
+  let token_response: AccessTokenResponse = response.json().await?;
+
+  Ok(token_response.access_token)
+}
+
 pub(crate) async fn authorized(
   Query(query): Query<AuthRequest>,
   AppState(state): AppState<State>,
 ) -> Result<impl IntoResponse> {
   debug!("Fetching token from oauth client...");
 
-  let token = state
-    .oauth_client
-    .exchange_code(AuthorizationCode::new(query.code))
-    .request_async(async_http_client)
-    .await?;
+  let token = request_github_access_token(
+    state.oauth_client.client_id(),
+    &state.client_secret,
+    &query.code,
+    state.oauth_client.redirect_url().unwrap(),
+  )
+  .await?;
 
   let mut session = Session::new();
 
@@ -51,7 +88,7 @@ pub(crate) async fn authorized(
     state
       .request_client
       .get("https://api.github.com/user")
-      .bearer_auth(token.access_token().secret())
+      .bearer_auth(token)
       .send()
       .await?
       .json::<User>()
