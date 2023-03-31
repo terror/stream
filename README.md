@@ -2,7 +2,7 @@
 the dissonance of bustling platforms like Twitter.
 
 <div align='center'>
-  <img width='500px' src='https://user-images.githubusercontent.com/31192478/228690438-cbb71abb-c829-4eb2-aff6-1e7ec1fb585e.png'/>
+  <img width='500px' src='https://user-images.githubusercontent.com/31192478/229210376-6f1a9433-0149-4d26-ac79-285be3f09626.png'/>
 </div>
 
 ### Development
