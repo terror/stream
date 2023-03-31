@@ -6,13 +6,16 @@ pub(crate) struct Server {
   assets: PathBuf,
   #[clap(long, default_value = "stream")]
   db_name: String,
-  #[clap(long, default_value = "8000")]
-  port: u16,
 }
 
 impl Server {
   pub(crate) async fn run(self) -> Result {
-    let addr = SocketAddr::from(([127, 0, 0, 1], self.port));
+    let port = env::var("PORT")
+      .ok()
+      .and_then(|s| s.parse().ok())
+      .unwrap_or(8000);
+
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
 
     log::debug!("Listening on port: {}", addr.port());
 
