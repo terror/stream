@@ -15,3 +15,9 @@ export const makeTags = (tags: string) => {
     ? []
     : tags.split(' ').map((tag) => (tag.startsWith('#') ? tag : `#${tag}`));
 };
+
+export const loginUrl = () => {
+  return import.meta.env.VITE_API_URL !== undefined
+    ? `${import.meta.env.VITE_API_URL}/auth/login`
+    : '/auth/login';
+};
