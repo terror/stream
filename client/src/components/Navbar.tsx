@@ -76,11 +76,8 @@ export const Navbar = () => {
               .
               <Text fontWeight='medium'>
                 If you do decide to join in on the conversation, please note
-                that you'll need to{' '}
-                <Link href={`${import.meta.env.VITE_API_URL}/auth/login`}>
-                  login
-                </Link>{' '}
-                to comment on posts. Additionally, if you happen to have admin
+                that you'll need to <Link href='/auth/login'>login</Link> to
+                comment on posts. Additionally, if you happen to have admin
                 access, you'll be able to craft new posts. However, I should
                 mention that the only admin account at this time is my own, so
                 you don't have admin privileges.

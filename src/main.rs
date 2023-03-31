@@ -72,7 +72,7 @@ mod state;
 mod subcommand;
 mod user;
 
-const CLIENT_URL: &str = "http://127.0.0.1:8000";
+const CLIENT_URL: &str = "http://127.0.0.1:8080";
 
 type Result<T = (), E = Error> = std::result::Result<T, E>;
 

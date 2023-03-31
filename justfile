@@ -47,8 +47,12 @@ run-container:
     -e GITHUB_REDIRECT_URL=$GITHUB_REDIRECT_URL \
     -e MONGODB_URL=$MONGODB_URL \
     -e RUST_LOG=trace \
-    -p 8000:8000 \
+    -p 8080:8080 \
     stream:latest
+
+serve:
+  npm run build
+  just run serve
 
 services:
   docker-compose up -d

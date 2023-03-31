@@ -51,7 +51,7 @@ impl State {
       .set_redirect_uri(
         RedirectUrl::new(
           env::var("GITHUB_REDIRECT_URL")
-            .unwrap_or_else(|_| "http://127.0.0.1:8000/auth/authorized".into()),
+            .unwrap_or_else(|_| "http://127.0.0.1:8080/auth/authorized".into()),
         )
         .expect("Invalid redirect url."),
       ),
