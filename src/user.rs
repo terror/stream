@@ -22,7 +22,7 @@ impl User {
 #[serde(rename_all = "camelCase")]
 pub(crate) struct StoredUser {
   pub(crate) login: String,
-  pub(crate) name: String,
+  pub(crate) name: Option<String>,
   pub(crate) bio: Option<String>,
   pub(crate) avatar_url: Option<String>,
   pub(crate) url: Option<String>,
