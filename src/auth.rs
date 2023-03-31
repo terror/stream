@@ -39,8 +39,7 @@ pub(crate) async fn authorized(
   let token = state
     .oauth_client
     .exchange_code(AuthorizationCode::new(query.code))
-    .request_async(async_http_client)
-    .await?;
+    .request(http_client)?;
 
   let mut session = Session::new();
 
