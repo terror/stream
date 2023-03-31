@@ -13,6 +13,11 @@ impl FromRef<State> for Arc<Db> {
     state.db.clone()
   }
 }
+impl FromRef<State> for BasicClient {
+  fn from_ref(state: &State) -> Self {
+    state.oauth_client.clone()
+  }
+}
 
 impl FromRef<State> for MongodbSessionStore {
   fn from_ref(state: &State) -> Self {
@@ -21,17 +26,17 @@ impl FromRef<State> for MongodbSessionStore {
 }
 
 impl State {
-  pub(crate) async fn new(db_name: &str, db: Arc<Db>) -> Result<Self> {
+  pub(crate) async fn new(db: Arc<Db>) -> Result<Self> {
     Ok(Self {
-      db,
+      db: db.clone(),
       oauth_client: BasicClient::new(
         ClientId::new(
-          env::var("CLIENT_ID")
-            .expect("Missing CLIENT_ID environment variable."),
+          env::var("GITHUB_CLIENT_ID")
+            .expect("Missing GITHUB_CLIENT_ID environment variable."),
         ),
         Some(ClientSecret::new(
-          env::var("CLIENT_SECRET")
-            .expect("Missing CLIENT_SECRET environment variable."),
+          env::var("GITHUB_CLIENT_SECRET")
+            .expect("Missing GITHUB_CLIENT_SECRET environment variable."),
         )),
         AuthUrl::new(env::var("AUTH_URL").unwrap_or_else(|_| {
           "https://github.com/login/oauth/authorize".into()
@@ -45,7 +50,7 @@ impl State {
       )
       .set_redirect_uri(
         RedirectUrl::new(
-          env::var("REDIRECT_URL")
+          env::var("GITHUB_REDIRECT_URL")
             .unwrap_or_else(|_| "http://127.0.0.1:8000/auth/authorized".into()),
         )
         .expect("Invalid redirect url."),
@@ -58,8 +63,9 @@ impl State {
         ))
         .build()?,
       session_store: MongodbSessionStore::new(
-        "mongodb://localhost:27017",
-        db_name,
+        &env::var("MONGODB_URL")
+          .unwrap_or_else(|_| "mongodb://localhost:27017".into()),
+        db.name(),
         "store",
       )
       .await?,

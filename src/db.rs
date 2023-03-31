@@ -10,9 +10,13 @@ impl Db {
   const USER_COLLECTION: &str = "users";
 
   pub(crate) async fn connect(db_name: &str) -> Result<Self> {
-    let mut client_options =
-      ClientOptions::parse(format!("mongodb://localhost:27017/{}", db_name))
-        .await?;
+    let mut client_options = ClientOptions::parse(format!(
+      "{}/{}",
+      env::var("MONGODB_URL")
+        .unwrap_or_else(|_| "mongodb://localhost:27017".into()),
+      db_name
+    ))
+    .await?;
 
     client_options.app_name = Some(db_name.to_string());
 
@@ -28,6 +32,10 @@ impl Db {
     Ok(Self {
       database: client.database(db_name),
     })
+  }
+
+  pub(crate) fn name(&self) -> &str {
+    self.database.name()
   }
 
   pub(crate) async fn index(&self) -> Result {

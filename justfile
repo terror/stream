@@ -14,6 +14,9 @@ all: build clippy fmt-check forbid lint test
 build:
   cargo build
 
+build-container:
+  docker build -t stream:latest .
+
 clippy:
   cargo clippy --all-targets --all-features
 
@@ -36,6 +39,16 @@ restart:
 
 run *args:
   cargo run -- {{args}}
+
+run-container:
+  docker run -d \
+    -e GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID \
+    -e GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET \
+    -e GITHUB_REDIRECT_URL=$GITHUB_REDIRECT_URL \
+    -e MONGODB_URL=$MONGODB_URL \
+    -e RUST_LOG=trace \
+    -p 8000:8000 \
+    stream:latest
 
 services:
   docker-compose up -d

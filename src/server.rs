@@ -45,7 +45,7 @@ impl Server {
           .route("/user", get(user::get_user))
           .nest_service("/assets", serve_dir.clone())
           .fallback_service(serve_dir)
-          .with_state(State::new(&self.db_name, db).await?)
+          .with_state(State::new(db).await?)
           .layer(CorsLayer::very_permissive())
           .into_make_service(),
       )
