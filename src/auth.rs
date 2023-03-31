@@ -76,7 +76,7 @@ pub(crate) async fn authorized(
 
   debug!("User authorized, redirecting to client...");
 
-  Ok((headers, Redirect::to(CLIENT_URL)))
+  Ok((headers, Redirect::to(&state.client_url)))
 }
 
 pub(crate) async fn logout(
@@ -90,12 +90,12 @@ pub(crate) async fn logout(
   let session =
     match state.session_store.load_session(cookie.to_string()).await? {
       Some(session) => session,
-      None => return Ok(Redirect::to(CLIENT_URL)),
+      None => return Ok(Redirect::to(&state.client_url)),
     };
 
   debug!("Destroying session...");
 
   state.session_store.destroy_session(session).await?;
 
-  Ok(Redirect::to(CLIENT_URL))
+  Ok(Redirect::to(&state.client_url))
 }

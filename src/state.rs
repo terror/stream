@@ -2,6 +2,7 @@ use super::*;
 
 #[derive(Debug, Clone)]
 pub(crate) struct State {
+  pub(crate) client_url: String,
   pub(crate) db: Arc<Db>,
   pub(crate) oauth_client: BasicClient,
   pub(crate) request_client: reqwest::Client,
@@ -28,6 +29,8 @@ impl FromRef<State> for MongodbSessionStore {
 impl State {
   pub(crate) async fn new(db: Arc<Db>) -> Result<Self> {
     Ok(Self {
+      client_url: env::var("CLIENT_URL")
+        .unwrap_or_else(|_| "https://127.0.0.1:8080".into()),
       db: db.clone(),
       oauth_client: BasicClient::new(
         ClientId::new(
