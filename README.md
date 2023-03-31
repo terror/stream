@@ -26,8 +26,8 @@ $ npm install
 $ npm run dev
 ```
 
-_n.b._ Refer to `.env.example` and `client/.env.example` for what environment
-variables need to be set.
+_n.b._ Refer to `.env.dev.example` and `client/.env.dev.example` for what
+environment variables need to be set.
 
 ### Prior Art
 
