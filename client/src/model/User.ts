@@ -1,6 +1,6 @@
 export type User = {
   login: string;
-  name: string;
+  name?: string;
   bio?: string;
   avatarUrl?: string;
   url?: string;

@@ -6,7 +6,7 @@ const ADMINS: [u64; 1] = [31192478];
 pub(crate) struct User {
   pub(crate) id: u64,
   pub(crate) login: String,
-  pub(crate) name: String,
+  pub(crate) name: Option<String>,
   pub(crate) bio: Option<String>,
   pub(crate) avatar_url: Option<String>,
   pub(crate) url: Option<String>,
