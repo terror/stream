@@ -12,10 +12,10 @@ impl Server {
   pub(crate) async fn run(self) -> Result {
     let port = env::var("PORT")
       .ok()
-      .and_then(|s| s.parse().ok())
-      .unwrap_or(8000);
+      .map(|val| val.parse::<u16>())
+      .unwrap_or(Ok(8080))?;
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
 
     log::debug!("Listening on port: {}", addr.port());
 
