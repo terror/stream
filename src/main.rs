@@ -21,7 +21,7 @@ use {
     headers::Cookie,
     response::{IntoResponse, Redirect, Response, TypedHeader},
     routing::Router,
-    routing::{delete, get, get_service, post, put},
+    routing::{get, get_service, post},
     Json, RequestPartsExt,
   },
   chrono::prelude::*,

@@ -37,10 +37,13 @@ impl Server {
           .route("/auth/authorized", get(auth::authorized))
           .route("/auth/login", get(auth::login))
           .route("/auth/logout", get(auth::logout))
-          .route("/posts", delete(posts::delete_post))
-          .route("/posts", get(posts::get_posts))
-          .route("/posts", post(posts::add_post))
-          .route("/posts", put(posts::update_post))
+          .route(
+            "/posts",
+            post(posts::add_post)
+              .get(posts::get_posts)
+              .put(posts::update_post)
+              .delete(posts::delete_post),
+          )
           .route("/search", get(search::search))
           .route("/user", get(user::get_user))
           .nest_service("/assets", serve_dir.clone())
