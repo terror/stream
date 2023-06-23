@@ -1,5 +1,12 @@
 use super::*;
 
+pub(crate) async fn get_post(
+  Path(id): Path<String>,
+  AppState(db): AppState<Arc<Db>>,
+) -> Result<impl IntoResponse> {
+  Ok(Json(db.find_post(&id).await?))
+}
+
 #[derive(Deserialize)]
 pub(crate) struct GetPostsParams {
   limit: Option<i64>,

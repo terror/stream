@@ -1,12 +1,14 @@
+const prefix = '/api';
+
 export const fetchClient = {
   async get(endpoint: string, init?: RequestInit) {
-    return fetch(endpoint, init);
+    return fetch(prefix + endpoint, init);
   },
   async getData<T>(endpoint: string, init?: RequestInit) {
     return (await (await this.get(endpoint, init)).json()) as T;
   },
   post: async (endpoint: string, data: any, init?: RequestInit) => {
-    return fetch(endpoint, {
+    return fetch(prefix + endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -16,7 +18,7 @@ export const fetchClient = {
     });
   },
   put: async (endpoint: string, data: any, init?: RequestInit) => {
-    return fetch(endpoint, {
+    return fetch(prefix + endpoint, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +28,7 @@ export const fetchClient = {
     });
   },
   delete: async (endpoint: string, init?: RequestInit) => {
-    return fetch(endpoint, {
+    return fetch(prefix + endpoint, {
       method: 'DELETE',
       ...init,
     });

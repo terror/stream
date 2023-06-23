@@ -20,6 +20,21 @@ build-container:
 clippy:
   cargo clippy --all-targets --all-features
 
+dev: services
+  concurrently \
+    --kill-others \
+    --names 'SERVER,CLIENT' \
+    --prefix-colors 'green.bold,magenta.bold' \
+    --prefix '[{name}] ' \
+    --prefix-length 2 \
+    --success first \
+    --handle-input \
+    --timestamp-format 'HH:mm:ss' \
+    --color \
+    -- \
+    'just watch run serve --db-name=stream' \
+    'npm run dev'
+
 fmt:
   cargo fmt
   npm run format

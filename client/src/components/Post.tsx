@@ -9,6 +9,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 
 import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
@@ -40,7 +41,9 @@ export const Post: React.FC<PostProps> = ({ post, onTagClick }) => {
       <StackItem>
         <SimpleGrid columns={[1, null, 4]} key={post.timestamp} mb='4'>
           <Text mt='0.5' mb='2' fontSize='sm' fontWeight='medium'>
-            {formatDate(post.timestamp)}
+            <RouterLink to={`/posts/${post._id}`}>
+              {formatDate(post.timestamp)}
+            </RouterLink>
           </Text>
           <Stack gridColumn='span 3'>
             {post.title && <Text fontWeight='bold'>{post.title}</Text>}

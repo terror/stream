@@ -2,8 +2,8 @@ use super::*;
 
 #[derive(Parser)]
 pub(crate) struct Server {
-  #[clap(long, default_value = "client/dist")]
-  assets: PathBuf,
+  #[clap(long)]
+  assets: Option<PathBuf>,
   #[clap(long, default_value = "stream")]
   db_name: String,
 }
@@ -29,25 +29,33 @@ impl Server {
       }
     });
 
-    let serve_dir = get_service(ServeDir::new(self.assets));
+    let serve_dir =
+      self.assets.map(|assets| get_service(ServeDir::new(assets)));
+
+    let mut router = Router::new()
+      .route("/api/auth/authorized", get(auth::authorized))
+      .route("/api/auth/login", get(auth::login))
+      .route("/api/auth/logout", get(auth::logout))
+      .route(
+        "/api/posts",
+        post(posts::add_post)
+          .get(posts::get_posts)
+          .put(posts::update_post)
+          .delete(posts::delete_post),
+      )
+      .route("/api/posts/:id", get(posts::get_post))
+      .route("/api/search", get(search::search))
+      .route("/api/user", get(user::get_user));
+
+    if let Some(serve_dir) = serve_dir {
+      router = router
+        .nest_service("/assets", serve_dir.clone())
+        .fallback_service(serve_dir);
+    }
 
     axum_server::Server::bind(addr)
       .serve(
-        Router::new()
-          .route("/auth/authorized", get(auth::authorized))
-          .route("/auth/login", get(auth::login))
-          .route("/auth/logout", get(auth::logout))
-          .route(
-            "/posts",
-            post(posts::add_post)
-              .get(posts::get_posts)
-              .put(posts::update_post)
-              .delete(posts::delete_post),
-          )
-          .route("/search", get(search::search))
-          .route("/user", get(user::get_user))
-          .nest_service("/assets", serve_dir.clone())
-          .fallback_service(serve_dir)
+        router
           .with_state(State::new(db).await?)
           .layer(CorsLayer::very_permissive())
           .into_make_service(),
