@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { Alert } from '../components/Alert';
 import { Layout } from '../components/Layout';
+import { NotFound } from '../components/NotFound';
 import { Post as PostComponent } from '../components/Post';
 import { fetchClient } from '../lib/fetchClient';
 import { Post as PostType } from '../model/Post';
@@ -38,6 +39,10 @@ export const Post = () => {
     );
   }
 
+  if (post === null) {
+    return <NotFound />;
+  }
+
   const remountAlert = () => setKey(key + 1);
 
   const handleUpdate = async (model: PostType, data: any) => {
@@ -69,21 +74,15 @@ export const Post = () => {
 
   return (
     <Layout>
-      {post === null ? (
-        <Center fontWeight='bold' fontSize='2xl'>
-          No post found for id {params.id}
-        </Center>
-      ) : (
-        <Stack p='4'>
-          {post && (
-            <PostComponent
-              post={post}
-              onUpdate={handleUpdate}
-              onDelete={handleDelete}
-            />
-          )}
-        </Stack>
-      )}
+      <Stack p='4'>
+        {post && (
+          <PostComponent
+            post={post}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+          />
+        )}
+      </Stack>
       <Box>
         {alert.status && (
           <Alert key={key} status={alert.status} content={alert.content} />
