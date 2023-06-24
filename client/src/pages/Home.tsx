@@ -1,13 +1,10 @@
-import { Stack } from '@chakra-ui/react';
-
-import { Navbar } from '../components/Navbar';
+import { Layout } from '../components/Layout';
 import { Stream } from '../components/Stream';
 
 export const Home = () => {
   return (
-    <Stack maxW='860px' m='auto'>
-      <Navbar />
+    <Layout>
       <Stream />
-    </Stack>
+    </Layout>
   );
 };

@@ -17,26 +17,25 @@ import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
 import { Post as PostType } from '../model/Post';
 import { Post } from './Post';
-import { PostForm, PostFormContext } from './PostForm';
+import { PostForm } from './PostForm';
 
 export const Stream = () => {
+  const user = useAuth();
+
   const limit = 20;
 
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(limit);
-
-  const user = useAuth();
+  const [posts, setPosts] = useState<PostType[]>([]);
 
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const [posts, setPosts] = useState<PostType[]>([]);
 
   const value = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchClient
-      .getData<PostType[]>(`/posts?limit=${limit}`)
+      .deserialize<PostType[]>('GET', `/posts?limit=${limit}`)
       .then((data) => {
         setPosts(data);
       })
@@ -46,7 +45,8 @@ export const Stream = () => {
   const handleInputChange = async (query: string) => {
     try {
       setPosts(
-        await fetchClient.getData<PostType[]>(
+        await fetchClient.deserialize<PostType[]>(
+          'GET',
           query === ''
             ? `/posts?limit=${limit}`
             : `/search?query=${encodeURIComponent(query)}`
@@ -57,13 +57,51 @@ export const Stream = () => {
     }
   };
 
+  const handleAdd = async (data: any) => {
+    try {
+      setPosts([
+        await fetchClient.deserialize<PostType>('POST', '/posts', data),
+        ...posts,
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUpdate = async (post: PostType, data: any) => {
+    try {
+      setPosts(
+        ((update: PostType) =>
+          posts.map((p) => (p._id === update._id ? update : p)))(
+          await fetchClient.deserialize<PostType>('PUT', '/posts', {
+            _id: post?._id,
+            timestamp: post?.timestamp,
+            ...data,
+          })
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDelete = async (post: PostType) => {
+    try {
+      await fetchClient.delete(`/posts?id=${post._id}`);
+      setPosts(posts.filter((p) => p._id !== post._id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleTagClick = (tag: string) => {
     if (value.current) value.current.value = tag;
     handleInputChange(tag);
   };
 
   const fetchMore = async () => {
-    const batch = await fetchClient.getData<PostType[]>(
+    const batch = await fetchClient.deserialize<PostType[]>(
+      'GET',
       `/posts?limit=${limit}&offset=${offset}`
     );
 
@@ -92,7 +130,8 @@ export const Stream = () => {
               +
             </IconButton>
             <PostForm
-              context={PostFormContext.Add}
+              context='Add'
+              onAdd={handleAdd}
               isOpen={isOpen}
               onClose={onClose}
             />
@@ -122,7 +161,13 @@ export const Stream = () => {
           style={{ overflowY: 'hidden' }}
         >
           {posts.map((post, i) => (
-            <Post key={i} post={post} onTagClick={handleTagClick} />
+            <Post
+              key={i}
+              onDelete={handleDelete}
+              onTagClick={handleTagClick}
+              onUpdate={handleUpdate}
+              post={post}
+            />
           ))}
         </InfiniteScroll>
       )}
