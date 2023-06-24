@@ -53,11 +53,11 @@ export const PostForm = ({
     try {
       switch (context) {
         case 'Add': {
-          if (onAdd) await onAdd(data);
+          await onAdd!(data);
           break;
         }
         case 'Update': {
-          if (onUpdate && post) await onUpdate(post, data);
+          await onUpdate!(post!, data);
           break;
         }
       }
