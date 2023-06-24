@@ -22,8 +22,10 @@ export const Post = () => {
   useEffect(() => {
     fetchClient
       .deserialize<PostType>('GET', `/posts/${params.id}`)
-      .then((post) => setPost(post))
-      .catch((err) => console.log(err));
+      .then((data) => setPost(data))
+      .catch((err: any) =>
+        setAlert({ status: 'error', content: err.toString() })
+      );
   }, []);
 
   if (post === undefined) {
@@ -38,13 +40,13 @@ export const Post = () => {
 
   const remountAlert = () => setKey(key + 1);
 
-  const handleUpdate = async (post: PostType, data: any) => {
+  const handleUpdate = async (model: PostType, data: any) => {
     try {
       remountAlert();
       setPost(
         await fetchClient.deserialize<PostType>('PUT', '/posts', {
-          _id: post?._id,
-          timestamp: post?.timestamp,
+          _id: model?._id,
+          timestamp: model?.timestamp,
           ...data,
         })
       );
@@ -54,10 +56,10 @@ export const Post = () => {
     }
   };
 
-  const handleDelete = async (post: PostType) => {
+  const handleDelete = async (model: PostType) => {
     try {
       remountAlert();
-      await fetchClient.delete(`/posts?id=${post._id}`);
+      await fetchClient.delete(`/posts?id=${model._id}`);
       setPost(null);
       setAlert({ status: 'success', content: 'Deleted post successfully' });
     } catch (err: any) {

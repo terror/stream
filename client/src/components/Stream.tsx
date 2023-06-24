@@ -47,7 +47,9 @@ export const Stream = () => {
       .then((data) => {
         setPosts(data);
       })
-      .catch((err) => console.error(err));
+      .catch((err: any) =>
+        setAlert({ status: 'error', content: err.toString() })
+      );
   }, []);
 
   const remountAlert = () => setKey(key + 1);
