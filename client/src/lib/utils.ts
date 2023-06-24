@@ -18,6 +18,6 @@ export const makeTags = (tags: string) => {
 
 export const loginUrl = () => {
   return import.meta.env.VITE_API_URL !== undefined
-    ? `${import.meta.env.VITE_API_URL}/auth/login`
-    : '/auth/login';
+    ? `${import.meta.env.VITE_API_URL}/api/auth/login`
+    : '/api/auth/login';
 };

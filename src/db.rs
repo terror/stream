@@ -92,6 +92,16 @@ impl Db {
     )
   }
 
+  pub(crate) async fn find_post(&self, id: &str) -> Result<Option<Post>> {
+    Ok(
+      self
+        .database
+        .collection::<Post>(Db::POST_COLLECTION)
+        .find_one(doc! { "_id": id }, None)
+        .await?,
+    )
+  }
+
   pub(crate) async fn delete_post(&self, id: String) -> Result<DeleteResult> {
     Ok(
       self

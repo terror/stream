@@ -14,34 +14,32 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import { fetchClient } from '../lib/fetchClient';
 import { makeTags } from '../lib/utils';
 import { Post as PostType } from '../model/Post';
 import { Markdown } from './Markdown';
 
-interface PostFormProps {
-  context: PostFormContext;
-  isOpen: boolean;
-  onClose: () => void;
-  post?: PostType;
-}
+export type PostFormContext = 'Add' | 'Update';
 
-export enum PostFormContext {
-  Add,
-  Update,
-}
-
-export const PostForm: React.FC<PostFormProps> = ({
+export const PostForm = ({
   context,
   isOpen,
+  onAdd,
   onClose,
+  onUpdate,
   post,
+}: {
+  context: PostFormContext;
+  isOpen: boolean;
+  onAdd?: (data: any) => Promise<void>;
+  onClose: () => void;
+  onUpdate?: (post: PostType, data: any) => Promise<void>;
+  post?: PostType;
 }) => {
   const [title, setTitle] = useState(post?.title || '');
   const [content, setContent] = useState(post?.content || '');
-  const [tags, setTags] = useState<string>(post?.tags.join(' ') || '');
+  const [tags, setTags] = useState(post?.tags.join(' ') || '');
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -53,13 +51,16 @@ export const PostForm: React.FC<PostFormProps> = ({
     };
 
     try {
-      context === PostFormContext.Add
-        ? await fetchClient.post('/posts', data)
-        : await fetchClient.put('/posts', {
-            _id: post?._id,
-            timestamp: post?.timestamp,
-            ...data,
-          });
+      switch (context) {
+        case 'Add': {
+          await onAdd!(data);
+          break;
+        }
+        case 'Update': {
+          await onUpdate!(post!, data);
+          break;
+        }
+      }
     } catch (err) {
       console.error(err);
     }

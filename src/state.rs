@@ -34,7 +34,7 @@ impl State {
 
     Ok(Self {
       client_url: env::var("CLIENT_URL")
-        .unwrap_or_else(|_| "http://127.0.0.1:8080".into()),
+        .unwrap_or_else(|_| "http://127.0.0.1:5173".into()),
       client_secret: client_secret.clone(),
       db: db.clone(),
       oauth_client: BasicClient::new(
@@ -55,10 +55,9 @@ impl State {
       )
       .set_auth_type(AuthType::RequestBody)
       .set_redirect_uri(
-        RedirectUrl::new(
-          env::var("GITHUB_REDIRECT_URL")
-            .unwrap_or_else(|_| "http://127.0.0.1:8080/auth/authorized".into()),
-        )
+        RedirectUrl::new(env::var("GITHUB_REDIRECT_URL").unwrap_or_else(
+          |_| "http://127.0.0.1:8080/api/auth/authorized".into(),
+        ))
         .expect("Invalid redirect url."),
       ),
       request_client: reqwest::Client::builder()

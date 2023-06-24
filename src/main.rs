@@ -1,6 +1,7 @@
 use {
   crate::{
     arguments::Arguments,
+    assets::Assets,
     auth::{AuthRedirect, COOKIE_NAME},
     db::Db,
     error::Error,
@@ -15,13 +16,13 @@ use {
   async_session::{async_trait, Session, SessionStore},
   axum::{
     extract::{
-      rejection::TypedHeaderRejectionReason, FromRef, FromRequestParts, Query,
-      State as AppState,
+      rejection::TypedHeaderRejectionReason, FromRef, FromRequestParts, Path,
+      Query, State as AppState,
     },
     headers::Cookie,
     response::{IntoResponse, Redirect, Response, TypedHeader},
     routing::Router,
-    routing::{get, get_service, post},
+    routing::{get, post},
     Json, RequestPartsExt,
   },
   chrono::prelude::*,
@@ -54,7 +55,10 @@ use {
     sync::Arc,
     time::Duration,
   },
-  tower_http::{cors::CorsLayer, services::ServeDir},
+  tower_http::{
+    cors::CorsLayer,
+    services::{ServeDir, ServeFile},
+  },
   uuid::Uuid,
 };
 
@@ -62,6 +66,7 @@ use {
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 mod arguments;
+mod assets;
 mod auth;
 mod db;
 mod error;

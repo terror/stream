@@ -1,14 +1,18 @@
-import { Stack } from '@chakra-ui/react';
+import { Route, Routes } from 'react-router-dom';
 
-import { Navbar } from './components/Navbar';
-import { Stream } from './components/Stream';
+import { NotFound } from './components/NotFound';
+import { Home } from './pages/Home';
+import { Post } from './pages/Post';
 
 const App = () => {
   return (
-    <Stack maxW='860px' m='auto'>
-      <Navbar />
-      <Stream />
-    </Stack>
+    <Routes>
+      <Route index element={<Home />} />
+      <Route path='posts'>
+        <Route path=':id' element={<Post />} />
+      </Route>
+      <Route path='*' element={<NotFound />} />
+    </Routes>
   );
 };
 

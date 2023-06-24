@@ -1,5 +1,12 @@
 use super::*;
 
+pub(crate) async fn get_post(
+  Path(id): Path<String>,
+  AppState(db): AppState<Arc<Db>>,
+) -> Result<impl IntoResponse> {
+  Ok(Json(db.find_post(&id).await?))
+}
+
 #[derive(Deserialize)]
 pub(crate) struct GetPostsParams {
   limit: Option<i64>,
@@ -37,18 +44,19 @@ pub(crate) async fn add_post(
 
   debug!("Adding post to database...");
 
-  db.add_post(Post {
+  let post = Post {
     id: Uuid::new_v4().to_string(),
     title,
     timestamp: Utc::now(),
     content,
     tags,
-  })
-  .await?;
+  };
+
+  db.add_post(post.clone()).await?;
 
   debug!("Post added successfully.");
 
-  Ok(())
+  Ok(Json(post))
 }
 
 pub(crate) async fn update_post(
@@ -62,11 +70,13 @@ pub(crate) async fn update_post(
     return Err(Error(anyhow!("Must be admin to update posts")));
   }
 
-  db.update_post(body.0).await?;
+  let post = body.0;
+
+  db.update_post(post.clone()).await?;
 
   debug!("Post updated successfully.");
 
-  Ok(())
+  Ok(Json(post))
 }
 
 #[derive(Serialize, Deserialize)]

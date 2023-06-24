@@ -25,6 +25,7 @@
     "react-dom": "^18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-markdown": "^8.0.6",
+    "react-router-dom": "^6.11.2",
     "rehype-katex": "^6.0.2",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1"
