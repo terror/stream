@@ -1,3 +1,5 @@
+use tower_http::services::ServeFile;
+
 use super::*;
 
 #[derive(Parser)]
@@ -29,8 +31,11 @@ impl Server {
       }
     });
 
-    let serve_dir =
-      self.assets.map(|assets| get_service(ServeDir::new(assets)));
+    let assets = self.assets.as_ref().map(|assets| Assets {
+      dir: ServeDir::new(assets.clone()),
+      index: ServeFile::new(assets.join("index.html")),
+      route: "/assets",
+    });
 
     let mut router = Router::new()
       .route("/api/auth/authorized", get(auth::authorized))
@@ -47,10 +52,10 @@ impl Server {
       .route("/api/search", get(search::search))
       .route("/api/user", get(user::get_user));
 
-    if let Some(serve_dir) = serve_dir {
+    if let Some(assets) = assets {
       router = router
-        .nest_service("/assets", serve_dir.clone())
-        .fallback_service(serve_dir);
+        .nest_service(assets.route, assets.dir)
+        .fallback_service(assets.index)
     }
 
     axum_server::Server::bind(addr)
