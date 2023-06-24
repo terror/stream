@@ -37,12 +37,9 @@ export const PostForm = ({
   onUpdate?: (post: PostType, data: any) => Promise<void>;
   post?: PostType;
 }) => {
-  const initialValue = (value?: string) =>
-    context === 'Update' ? value || '' : '';
-
-  const [title, setTitle] = useState(initialValue(post?.title));
-  const [content, setContent] = useState(initialValue(post?.content));
-  const [tags, setTags] = useState<string>(initialValue(post?.tags.join(' ')));
+  const [title, setTitle] = useState(post?.title || '');
+  const [content, setContent] = useState(post?.content || '');
+  const [tags, setTags] = useState(post?.tags.join(' ') || '');
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
