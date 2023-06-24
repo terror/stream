@@ -85,7 +85,7 @@ const Data = ({
                   fontSize='sm'
                   fontWeight='medium'
                   key={i}
-                  onClick={() => onTagClick(tag)}
+                  onClick={() => onTagClick && onTagClick(tag)}
                   p='1'
                   style={{ textDecoration: 'none' }}
                 >

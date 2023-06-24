@@ -1,5 +1,6 @@
 import { AddIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Center,
   Flex,
   Heading,
@@ -16,6 +17,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
 import { Post as PostType } from '../model/Post';
+import { Alert } from './Alert';
 import { Post } from './Post';
 import { PostForm } from './PostForm';
 
@@ -24,7 +26,13 @@ export const Stream = () => {
 
   const limit = 20;
 
+  const [alert, setAlert] = useState<{
+    status: 'info' | 'warning' | 'success' | 'error' | 'loading' | undefined;
+    content: string;
+  }>({ status: undefined, content: '' });
+
   const [hasMore, setHasMore] = useState(true);
+  const [key, setKey] = useState(0);
   const [offset, setOffset] = useState(limit);
   const [posts, setPosts] = useState<PostType[]>([]);
 
@@ -42,6 +50,8 @@ export const Stream = () => {
       .catch((err) => console.error(err));
   }, []);
 
+  const remountAlert = () => setKey(key + 1);
+
   const handleInputChange = async (query: string) => {
     try {
       setPosts(
@@ -53,44 +63,50 @@ export const Stream = () => {
         )
       );
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   };
 
   const handleAdd = async (data: any) => {
     try {
+      remountAlert();
       setPosts([
         await fetchClient.deserialize<PostType>('POST', '/posts', data),
         ...posts,
       ]);
-    } catch (err) {
-      console.log(err);
+      setAlert({ status: 'success', content: 'Added post successfully' });
+    } catch (err: any) {
+      setAlert({ status: 'error', content: err.toString() });
     }
   };
 
   const handleUpdate = async (post: PostType, data: any) => {
     try {
+      remountAlert();
       setPosts(
         ((update: PostType) =>
           posts.map((p) => (p._id === update._id ? update : p)))(
           await fetchClient.deserialize<PostType>('PUT', '/posts', {
-            _id: post?._id,
-            timestamp: post?.timestamp,
+            _id: post._id,
+            timestamp: post.timestamp,
             ...data,
           })
         )
       );
-    } catch (err) {
-      console.log(err);
+      setAlert({ status: 'success', content: 'Updated post successfully' });
+    } catch (err: any) {
+      setAlert({ status: 'error', content: err.toString() });
     }
   };
 
   const handleDelete = async (post: PostType) => {
     try {
+      remountAlert();
       await fetchClient.delete(`/posts?id=${post._id}`);
       setPosts(posts.filter((p) => p._id !== post._id));
-    } catch (err) {
-      console.log(err);
+      setAlert({ status: 'success', content: 'Deleted post successfully' });
+    } catch (err: any) {
+      setAlert({ status: 'error', content: err.toString() });
     }
   };
 
@@ -171,6 +187,11 @@ export const Stream = () => {
           ))}
         </InfiniteScroll>
       )}
+      <Box>
+        {alert.status && (
+          <Alert key={key} status={alert.status} content={alert.content} />
+        )}
+      </Box>
     </Stack>
   );
 };

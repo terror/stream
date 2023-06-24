@@ -1,7 +1,8 @@
-import { Center, Spinner, Stack } from '@chakra-ui/react';
+import { Box, Center, Spinner, Stack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { Alert } from '../components/Alert';
 import { Layout } from '../components/Layout';
 import { Post as PostComponent } from '../components/Post';
 import { fetchClient } from '../lib/fetchClient';
@@ -10,7 +11,13 @@ import { Post as PostType } from '../model/Post';
 export const Post = () => {
   const params = useParams<{ id: string }>();
 
+  const [alert, setAlert] = useState<{
+    status: 'info' | 'warning' | 'success' | 'error' | 'loading' | undefined;
+    content: string;
+  }>({ status: undefined, content: '' });
+
   const [post, setPost] = useState<PostType | undefined | null>(undefined);
+  const [key, setKey] = useState(0);
 
   useEffect(() => {
     fetchClient
@@ -29,8 +36,11 @@ export const Post = () => {
     );
   }
 
+  const remountAlert = () => setKey(key + 1);
+
   const handleUpdate = async (post: PostType, data: any) => {
     try {
+      remountAlert();
       setPost(
         await fetchClient.deserialize<PostType>('PUT', '/posts', {
           _id: post?._id,
@@ -38,17 +48,20 @@ export const Post = () => {
           ...data,
         })
       );
-    } catch (err) {
-      console.log(err);
+      setAlert({ status: 'success', content: 'Updated post successfully' });
+    } catch (err: any) {
+      setAlert({ status: 'error', content: err.toString() });
     }
   };
 
   const handleDelete = async (post: PostType) => {
     try {
+      remountAlert();
       await fetchClient.delete(`/posts?id=${post._id}`);
       setPost(null);
-    } catch (err) {
-      console.log(err);
+      setAlert({ status: 'success', content: 'Deleted post successfully' });
+    } catch (err: any) {
+      setAlert({ status: 'error', content: err.toString() });
     }
   };
 
@@ -69,6 +82,11 @@ export const Post = () => {
           )}
         </Stack>
       )}
+      <Box>
+        {alert.status && (
+          <Alert key={key} status={alert.status} content={alert.content} />
+        )}
+      </Box>
     </Layout>
   );
 };
