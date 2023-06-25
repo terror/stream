@@ -1,8 +1,4 @@
-import {
-  AlertIcon,
-  Alert as ChakraAlert,
-  Text,
-} from '@chakra-ui/react';
+import { AlertIcon, Alert as ChakraAlert, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 export const Alert = ({
