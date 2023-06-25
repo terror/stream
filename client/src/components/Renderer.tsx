@@ -22,6 +22,8 @@ import { chakra } from '@chakra-ui/system';
 import deepmerge from 'deepmerge';
 import * as React from 'react';
 import { Components } from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { nord, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 type GetCoreProps = {
   children?: React.ReactNode;
@@ -59,16 +61,32 @@ export const defaults: Defaults = {
     );
   },
 
-  code: (props) => {
-    const { inline, children, className } = props;
-
-    if (inline) {
-      return <Code children={children} />;
-    }
-
+  code: ({ inline, className, children }) => {
     const { colorMode } = useColorMode();
 
-    return (
+    if (inline) {
+      return (
+        <Code
+          p='1'
+          borderRadius='md'
+          background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
+        >
+          {children}
+        </Code>
+      );
+    }
+
+    const match = /language-(\w+)/.exec(className || '');
+
+    return match ? (
+      <SyntaxHighlighter
+        style={colorMode === 'light' ? oneLight : nord}
+        language={match[1]}
+        PreTag='div'
+        children={String(children).replace(/\n$/, '')}
+        customStyle={{ borderRadius: '10px' }}
+      />
+    ) : (
       <Code
         overflow='auto'
         className={className}
