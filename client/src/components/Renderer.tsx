@@ -64,13 +64,12 @@ export const defaults: Defaults = {
   code: ({ inline, className, children }) => {
     const { colorMode } = useColorMode();
 
+    const background =
+      colorMode === 'light' ? 'rgb(250, 250, 250)' : 'rgb(46, 52, 64)';
+
     if (inline) {
       return (
-        <Code
-          p='1'
-          borderRadius='md'
-          background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
-        >
+        <Code background={background} borderRadius='md' p='1'>
           {children}
         </Code>
       );
@@ -80,23 +79,25 @@ export const defaults: Defaults = {
 
     return match ? (
       <SyntaxHighlighter
-        style={colorMode === 'light' ? oneLight : nord}
-        language={match[1]}
         PreTag='div'
         children={String(children).replace(/\n$/, '')}
-        customStyle={{ borderRadius: '10px' }}
+        customStyle={{ borderRadius: '10px', fontSize: '14px' }}
+        language={match[1]}
+        style={colorMode === 'light' ? oneLight : nord}
       />
     ) : (
       <Code
-        overflow='auto'
-        className={className}
-        p='2'
-        borderRadius='md'
-        whiteSpace='pre'
-        display='block'
-        background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
-        w='full'
+        background={background}
+        borderRadius='xl'
         children={children}
+        className={className}
+        display='block'
+        fontFamily='fira code'
+        fontSize='sm'
+        overflow='auto'
+        p='4'
+        w='full'
+        whiteSpace='pre'
       />
     );
   },
