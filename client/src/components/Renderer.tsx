@@ -67,9 +67,9 @@ export const defaults: Defaults = {
     if (inline) {
       return (
         <Code
-          p='1'
-          borderRadius='md'
           background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
+          borderRadius='md'
+          p='1'
         >
           {children}
         </Code>
@@ -80,24 +80,24 @@ export const defaults: Defaults = {
 
     return match ? (
       <SyntaxHighlighter
-        style={colorMode === 'light' ? oneLight : nord}
-        language={match[1]}
         PreTag='div'
         children={String(children).replace(/\n$/, '')}
         customStyle={{ borderRadius: '10px', fontSize: '14px' }}
+        language={match[1]}
+        style={colorMode === 'light' ? oneLight : nord}
       />
     ) : (
       <Code
-        fontSize={'sm'}
-        overflow='auto'
-        className={className}
-        p='4'
-        borderRadius='xl'
-        whiteSpace='pre'
-        display='block'
         background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
-        w='full'
+        borderRadius='xl'
         children={children}
+        className={className}
+        display='block'
+        fontSize='sm'
+        overflow='auto'
+        p='4'
+        w='full'
+        whiteSpace='pre'
       />
     );
   },
