@@ -120,7 +120,7 @@ impl Db {
   pub(crate) async fn search(&self, query: &str) -> Result<Vec<Post>> {
     info!("Received query: {query}");
 
-    if query.starts_with("#") {
+    if query.starts_with('#') {
       return Ok(
         self
           .database
