@@ -120,6 +120,23 @@ impl Db {
   pub(crate) async fn search(&self, query: &str) -> Result<Vec<Post>> {
     info!("Received query: {query}");
 
+    if query.starts_with('#') {
+      return Ok(
+        self
+          .database
+          .collection::<Post>(Db::POST_COLLECTION)
+          .find(
+            doc! { "tags" : { "$in": vec![query] } },
+            FindOptions::builder()
+              .sort(doc! { "timestamp": -1 })
+              .build(),
+          )
+          .await?
+          .try_collect::<Vec<Post>>()
+          .await?,
+      );
+    }
+
     Ok(
       self
         .database
@@ -284,9 +301,9 @@ mod tests {
       Post {
         id: id(),
         title: Some("baz".into()),
-        content: "quux".into(),
+        content: "math".into(),
         timestamp: Utc::now(),
-        tags: vec!["#math".into(), "#code".into()],
+        tags: vec!["#code".into()],
       },
     ]
   }
@@ -402,5 +419,46 @@ mod tests {
     let updated = posts.first().unwrap();
 
     assert_eq!(updated.content, "updated");
+  }
+
+  #[tokio::test(flavor = "multi_thread")]
+  async fn search_for_posts_by_content() {
+    let TestContext { db, .. } = TestContext::new().await;
+
+    let posts = posts();
+
+    for post in &posts {
+      db.add_post(post.clone()).await.unwrap();
+    }
+
+    db.create_post_index(
+      doc! {
+        "title": "text",
+        "content": "text",
+        "tags": "text",
+      },
+      doc! {
+        "title": 2,
+        "content": 2,
+        "tags": 1,
+      },
+    )
+    .await
+    .unwrap();
+
+    assert_eq!(db.search("foo").await.unwrap().len(), 1);
+  }
+
+  #[tokio::test(flavor = "multi_thread")]
+  async fn search_for_posts_by_tag() {
+    let TestContext { db, .. } = TestContext::new().await;
+
+    let posts = posts();
+
+    for post in &posts {
+      db.add_post(post.clone()).await.unwrap();
+    }
+
+    assert_eq!(db.search("#math").await.unwrap().len(), 2);
   }
 }

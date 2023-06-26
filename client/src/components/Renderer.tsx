@@ -23,7 +23,10 @@ import deepmerge from 'deepmerge';
 import * as React from 'react';
 import { Components } from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { nord, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import {
+  coldarkCold,
+  nord,
+} from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 type GetCoreProps = {
   children?: React.ReactNode;
@@ -65,7 +68,7 @@ export const defaults: Defaults = {
     const { colorMode } = useColorMode();
 
     const background =
-      colorMode === 'light' ? 'rgb(250, 250, 250)' : 'rgb(46, 52, 64)';
+      colorMode === 'light' ? 'rgb(227, 234, 242)' : 'rgb(46, 52, 64)';
 
     if (inline) {
       return (
@@ -81,9 +84,12 @@ export const defaults: Defaults = {
       <SyntaxHighlighter
         PreTag='div'
         children={String(children).replace(/\n$/, '')}
-        customStyle={{ borderRadius: '10px', fontSize: '14px' }}
+        customStyle={{
+          borderRadius: '10px',
+          fontSize: '14px',
+        }}
         language={match[1]}
-        style={colorMode === 'light' ? oneLight : nord}
+        style={colorMode === 'light' ? coldarkCold : nord}
       />
     ) : (
       <Code

@@ -1,6 +1,6 @@
 import { Box, Center, Spinner, Stack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Alert } from '../components/Alert';
 import { Layout } from '../components/Layout';
@@ -11,6 +11,8 @@ import { Post as PostType } from '../model/Post';
 
 export const Post = () => {
   const params = useParams<{ id: string }>();
+
+  const navigate = useNavigate();
 
   const [alert, setAlert] = useState<{
     status: 'info' | 'warning' | 'success' | 'error' | 'loading' | undefined;
@@ -80,6 +82,7 @@ export const Post = () => {
             post={post}
             onUpdate={handleUpdate}
             onDelete={handleDelete}
+            onTagClick={(tag) => navigate(`/?q=${encodeURIComponent(tag)}`)}
           />
         )}
       </Stack>
