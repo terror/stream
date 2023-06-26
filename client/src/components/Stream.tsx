@@ -21,7 +21,7 @@ import { Alert } from './Alert';
 import { Post } from './Post';
 import { PostForm } from './PostForm';
 
-export const Stream = ({ query }: { query: string | null }) => {
+export const Stream = ({ q }: { q: string | null }) => {
   const user = useAuth();
 
   const limit = 20;
@@ -46,8 +46,7 @@ export const Stream = ({ query }: { query: string | null }) => {
       .deserialize<PostType[]>('GET', `/posts?limit=${limit}`)
       .then((data) => {
         setPosts(data);
-        if (query && value.current)
-          handleInputChange((value.current.value = query));
+        if (q && value.current) handleInputChange((value.current.value = q));
       })
       .catch((err: any) =>
         setAlert({ status: 'error', content: err.toString() })

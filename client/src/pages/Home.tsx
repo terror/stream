@@ -8,7 +8,7 @@ export const Home = () => {
 
   return (
     <Layout>
-      <Stream query={decodeURIComponent(searchParams.get('q') || '')} />
+      <Stream q={decodeURIComponent(searchParams.get('q') || '')} />
     </Layout>
   );
 };
