@@ -84,14 +84,15 @@ export const defaults: Defaults = {
         language={match[1]}
         PreTag='div'
         children={String(children).replace(/\n$/, '')}
-        customStyle={{ borderRadius: '10px' }}
+        customStyle={{ borderRadius: '10px', fontSize: '14px' }}
       />
     ) : (
       <Code
+        fontSize={'sm'}
         overflow='auto'
         className={className}
-        p='2'
-        borderRadius='md'
+        p='4'
+        borderRadius='xl'
         whiteSpace='pre'
         display='block'
         background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
