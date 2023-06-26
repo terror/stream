@@ -64,13 +64,12 @@ export const defaults: Defaults = {
   code: ({ inline, className, children }) => {
     const { colorMode } = useColorMode();
 
+    const background =
+      colorMode === 'light' ? 'rgb(250, 250, 250)' : 'rgb(46, 52, 64)';
+
     if (inline) {
       return (
-        <Code
-          background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
-          borderRadius='md'
-          p='1'
-        >
+        <Code background={background} borderRadius='md' p='1'>
           {children}
         </Code>
       );
@@ -88,11 +87,12 @@ export const defaults: Defaults = {
       />
     ) : (
       <Code
-        background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
+        background={background}
         borderRadius='xl'
         children={children}
         className={className}
         display='block'
+        fontFamily='fira code'
         fontSize='sm'
         overflow='auto'
         p='4'
