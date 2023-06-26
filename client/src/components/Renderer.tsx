@@ -87,7 +87,6 @@ export const defaults: Defaults = {
         customStyle={{
           borderRadius: '10px',
           fontSize: '14px',
-          fontFamily: 'fira code',
         }}
         language={match[1]}
         style={colorMode === 'light' ? coldarkCold : nord}
