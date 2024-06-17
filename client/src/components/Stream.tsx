@@ -151,9 +151,9 @@ export const Stream = ({ q }: { q: string | null }) => {
       <Input
         placeholder='Search the stream...'
         fontWeight='medium'
+        background={colorMode === 'light' ? 'gray.300' : '#1A1A1A'}
         border='none'
         outline='none'
-        background={colorMode === 'light' ? 'gray.200' : 'gray.700'}
         _focus={{ boxShadow: 'none' }}
         ref={value}
         onChange={(e) => handleInputChange(e.target.value)}
