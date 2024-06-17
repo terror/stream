@@ -6,8 +6,8 @@ pub(crate) struct Db {
 }
 
 impl Db {
-  const POST_COLLECTION: &str = "posts";
-  const USER_COLLECTION: &str = "users";
+  const POST_COLLECTION: &'static str = "posts";
+  const USER_COLLECTION: &'static str = "users";
 
   pub(crate) async fn connect(db_name: &str) -> Result<Self> {
     let mut client_options = ClientOptions::parse(format!(

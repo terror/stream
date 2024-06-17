@@ -1,5 +1,5 @@
-**stream** bestows a tranquil haven where my thoughts can unfurl, unhampered by
-the dissonance of bustling platforms like Twitter.
+**stream** is a lightweight personal micro-blogging platform I use in favour of
+services like [X](https://x.com/), where I just need a quiet space to write.
 
 <div align='center'>
   <img width='500px' src='https://user-images.githubusercontent.com/31192478/229210376-6f1a9433-0149-4d26-ac79-285be3f09626.png'/>
@@ -31,6 +31,5 @@ environment variables need to be set.
 
 ### Prior Art
 
-It was the enchanting allure of Linus Lee's
-[stream](https://stream.thesephist.com/) that kindled my desire to create this
-ethereal sanctuary.
+This was heavily inspired by Linus Lee's
+[stream](https://stream.thesephist.com/).
