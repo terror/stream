@@ -3,6 +3,7 @@ import {
   createStandaloneToast,
   extendTheme,
 } from '@chakra-ui/react';
+import { type GlobalStyleProps, mode } from '@chakra-ui/theme-tools';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
 import '@fontsource/inter/700.css';
@@ -13,9 +14,28 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { AuthProvider } from './providers/AuthProvider';
 
-export const { ToastContainer } = createStandaloneToast();
+const { ToastContainer } = createStandaloneToast();
 
 const theme = extendTheme({
+  config: { initialColorMode: 'dark', useSystemColorMode: true },
+  styles: {
+    global: (props: GlobalStyleProps) => ({
+      body: {
+        color: mode('gray.800', 'whiteAlpha.900')(props),
+        bg: mode('gray.100', '#141214')(props),
+      },
+    }),
+  },
+  components: {
+    Modal: {
+      baseStyle: (props: GlobalStyleProps) => ({
+        dialog: {
+          color: mode('gray.800', 'whiteAlpha.900')(props),
+          bg: mode('gray.100', '#141214')(props),
+        },
+      }),
+    },
+  },
   fonts: {
     body: `'Inter', sans-serif`,
   },
