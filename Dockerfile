@@ -6,7 +6,7 @@ RUN npm ci
 COPY . .
 RUN npm run build -- --mode=production
 
-FROM rust:1.68-buster as server
+FROM rust:slim-buster as server
 
 WORKDIR /usr/src/app
 COPY . .
