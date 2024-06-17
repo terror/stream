@@ -1,3 +1,5 @@
+## stream
+
 **stream** is a lightweight personal micro-blogging platform I use in favour of
 services like [X](https://x.com/), where I tend to get distracted easily.
 
