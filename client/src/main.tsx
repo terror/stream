@@ -3,8 +3,7 @@ import {
   createStandaloneToast,
   extendTheme,
 } from '@chakra-ui/react';
-import { mode } from '@chakra-ui/theme-tools';
-import type { GlobalStyleProps } from '@chakra-ui/theme-tools';
+import { type GlobalStyleProps, mode } from '@chakra-ui/theme-tools';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
 import '@fontsource/inter/700.css';
