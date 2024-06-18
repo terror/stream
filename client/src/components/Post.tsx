@@ -1,5 +1,6 @@
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
+  Box,
   HStack,
   IconButton,
   Link,
@@ -68,17 +69,17 @@ const Data = ({
 }) => {
   return (
     <SimpleGrid columns={[1, null, 4]} key={post.timestamp} mb='4'>
-      <Text
-        mt='0.5'
-        mb='2'
-        fontSize='sm'
-        fontWeight='medium'
-        _hover={{ textDecoration: 'underline' }}
-      >
+      <Box mt='0.5' mb='2'>
         <RouterLink to={`/posts/${post._id}`}>
-          {formatDate(post.timestamp)}
+          <Text
+            fontSize='sm'
+            fontWeight='medium'
+            _hover={{ textDecoration: 'underline' }}
+          >
+            {formatDate(post.timestamp)}
+          </Text>
         </RouterLink>
-      </Text>
+      </Box>
       <Stack gridColumn='span 3'>
         {post.title && <Text fontWeight='bold'>{post.title}</Text>}
         <Markdown content={post.content} />
