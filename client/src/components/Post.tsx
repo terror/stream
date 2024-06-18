@@ -68,7 +68,13 @@ const Data = ({
 }) => {
   return (
     <SimpleGrid columns={[1, null, 4]} key={post.timestamp} mb='4'>
-      <Text mt='0.5' mb='2' fontSize='sm' fontWeight='medium'>
+      <Text
+        mt='0.5'
+        mb='2'
+        fontSize='sm'
+        fontWeight='medium'
+        _hover={{ textDecoration: 'underline' }}
+      >
         <RouterLink to={`/posts/${post._id}`}>
           {formatDate(post.timestamp)}
         </RouterLink>

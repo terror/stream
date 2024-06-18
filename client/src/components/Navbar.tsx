@@ -1,6 +1,8 @@
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
   Flex,
   HStack,
+  IconButton,
   Link,
   Modal,
   ModalBody,
@@ -19,6 +21,8 @@ import { loginUrl } from '../lib/utils';
 export const Navbar = () => {
   const { toggleColorMode } = useColorMode();
 
+  const { colorMode } = useColorMode();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -29,15 +33,12 @@ export const Navbar = () => {
         </Link>
       </Text>
       <HStack ml='auto'>
-        <Link
+        <IconButton
+          aria-label='Toggle color mode'
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          background='transparent'
           onClick={toggleColorMode}
-          fontStyle='italic'
-          fontWeight='medium'
-          as='div'
-          style={{ textDecoration: 'none' }}
-        >
-          light/dark
-        </Link>
+        />
         <Link
           fontWeight='bold'
           ml='auto'

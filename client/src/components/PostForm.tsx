@@ -13,6 +13,7 @@ import {
   ModalOverlay,
   Text,
   Textarea,
+  useColorMode,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
@@ -37,6 +38,8 @@ export const PostForm = ({
   onUpdate?: (post: PostType, data: any) => Promise<void>;
   post?: PostType;
 }) => {
+  const { colorMode } = useColorMode();
+
   const [title, setTitle] = useState(post?.title || '');
   const [content, setContent] = useState(post?.content || '');
   const [tags, setTags] = useState(post?.tags.join(' ') || '');
@@ -108,7 +111,11 @@ export const PostForm = ({
                 onChange={(event) => setTags(event.target.value)}
               />
             </FormControl>
-            <Button mt='2' type='submit'>
+            <Button
+              backgroundColor={colorMode === 'light' ? '#DEE3EB' : '#1A1A1A'}
+              mt='2'
+              type='submit'
+            >
               Publish
             </Button>
           </form>

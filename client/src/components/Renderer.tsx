@@ -67,8 +67,7 @@ export const defaults: Defaults = {
   code: ({ inline, className, children }) => {
     const { colorMode } = useColorMode();
 
-    const background =
-      colorMode === 'light' ? 'rgb(227, 234, 242)' : 'rgb(46, 52, 64)';
+    const background = colorMode === 'light' ? '#DEE3EB' : '#1A1A1A';
 
     if (inline) {
       return (
@@ -87,6 +86,7 @@ export const defaults: Defaults = {
         customStyle={{
           borderRadius: '10px',
           fontSize: '14px',
+          background,
         }}
         language={match[1]}
         style={colorMode === 'light' ? coldarkCold : nord}
