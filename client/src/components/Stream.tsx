@@ -151,7 +151,7 @@ export const Stream = ({ q }: { q: string | null }) => {
       <Input
         placeholder='Search the stream...'
         fontWeight='medium'
-        background={colorMode === 'light' ? 'gray.300' : '#1A1A1A'}
+        background={colorMode === 'light' ? '#DEE3EB' : '#1A1A1A'}
         border='none'
         outline='none'
         _focus={{ boxShadow: 'none' }}
