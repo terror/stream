@@ -140,8 +140,7 @@ export const Stream = ({ q }: { q: string | null }) => {
               +
             </IconButton>
             <PostForm
-              context='Add'
-              onAdd={handleAdd}
+              context={{ type: 'add', handler: handleAdd }}
               isOpen={isOpen}
               onClose={onClose}
             />
