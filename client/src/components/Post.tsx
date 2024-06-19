@@ -18,7 +18,7 @@ import { Post as PostType } from '../model/Post';
 import { Markdown } from './Markdown';
 import { PostForm } from './PostForm';
 
-const Controls = ({
+const PostControls = ({
   handleDelete,
   isOpen,
   onClose,
@@ -30,7 +30,7 @@ const Controls = ({
   isOpen: boolean;
   onClose: () => void;
   onOpen: () => void;
-  onUpdate?: (post: PostType, data: any) => Promise<void>;
+  onUpdate: (post: PostType, data: any) => Promise<void>;
   post: PostType;
 }) => {
   return (
@@ -50,8 +50,7 @@ const Controls = ({
         size='sm'
       />
       <PostForm
-        context='Update'
-        onUpdate={onUpdate}
+        context={{ type: 'update', handler: onUpdate }}
         post={post}
         isOpen={isOpen}
         onClose={onClose}
@@ -60,7 +59,7 @@ const Controls = ({
   );
 };
 
-const Data = ({
+const PostData = ({
   post,
   onTagClick,
 }: {
@@ -118,7 +117,7 @@ export const Post = ({
 }: {
   onDelete?: (post: PostType) => Promise<void>;
   onTagClick?: (tag: string) => void;
-  onUpdate?: (post: PostType, data: any) => Promise<void>;
+  onUpdate: (post: PostType, data: any) => Promise<void>;
   post: PostType;
 }) => {
   const user = useAuth();
@@ -136,10 +135,10 @@ export const Post = ({
   return (
     <Stack>
       <StackItem>
-        <Data post={post} onTagClick={onTagClick} />
+        <PostData post={post} onTagClick={onTagClick} />
       </StackItem>
       {user && user.isAdmin && (
-        <Controls
+        <PostControls
           onOpen={onOpen}
           handleDelete={handleDelete}
           onUpdate={onUpdate}

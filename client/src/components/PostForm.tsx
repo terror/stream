@@ -21,21 +21,19 @@ import { makeTags } from '../lib/utils';
 import { Post as PostType } from '../model/Post';
 import { Markdown } from './Markdown';
 
-export type PostFormContext = 'Add' | 'Update';
+export type PostFormContext =
+  | { type: 'add'; handler: (data: any) => Promise<void> }
+  | { type: 'update'; handler: (post: PostType, data: any) => Promise<void> };
 
 export const PostForm = ({
   context,
   isOpen,
-  onAdd,
   onClose,
-  onUpdate,
   post,
 }: {
   context: PostFormContext;
   isOpen: boolean;
-  onAdd?: (data: any) => Promise<void>;
   onClose: () => void;
-  onUpdate?: (post: PostType, data: any) => Promise<void>;
   post?: PostType;
 }) => {
   const { colorMode } = useColorMode();
@@ -54,13 +52,13 @@ export const PostForm = ({
     };
 
     try {
-      switch (context) {
-        case 'Add': {
-          if (onAdd) await onAdd(data);
+      switch (context.type) {
+        case 'add': {
+          await context.handler(data);
           break;
         }
-        case 'Update': {
-          if (onUpdate && post) await onUpdate(post, data);
+        case 'update': {
+          if (post) await context.handler(post, data);
           break;
         }
       }
