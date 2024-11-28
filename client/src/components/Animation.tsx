@@ -286,6 +286,7 @@ export const Animation = () => {
    */
   const createMaterials = () => {
     const materials: THREE.MeshStandardMaterial[] = [];
+
     const baseHue = 0.65;
     const hueRange = 0.05;
     const saturation = 0.7;
@@ -293,14 +294,18 @@ export const Animation = () => {
 
     for (let i = 0; i < 7; i++) {
       const hue = baseHue + (Math.random() - 0.5) * hueRange;
+
       const color = new THREE.Color().setHSL(hue, saturation, lightness);
+
       const material = new THREE.MeshStandardMaterial({
         color,
         metalness: 0.5,
         roughness: 0.5,
       });
+
       materials.push(material);
     }
+
     return materials;
   };
 
