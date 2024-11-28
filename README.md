@@ -4,7 +4,7 @@
 services like [X](https://x.com/), where I tend to get distracted easily.
 
 <div align='center'>
-  <img width='500px' src='https://user-images.githubusercontent.com/31192478/229210376-6f1a9433-0149-4d26-ac79-285be3f09626.png'/>
+  <img width='800px' src="https://github.com/user-attachments/assets/6cf9ae84-106b-46c2-9cfa-86be8c3b3e64"/>
 </div>
 
 ### Development

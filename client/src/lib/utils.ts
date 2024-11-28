@@ -10,14 +10,14 @@ export const formatDate = (date: string) => {
   }).format(new Date(date));
 };
 
-export const makeTags = (tags: string) => {
-  return tags.length === 0
-    ? []
-    : tags.split(' ').map((tag) => (tag.startsWith('#') ? tag : `#${tag}`));
-};
-
 export const loginUrl = () => {
   return import.meta.env.VITE_API_URL !== undefined
     ? `${import.meta.env.VITE_API_URL}/api/auth/login`
     : '/api/auth/login';
+};
+
+export const makeTags = (tags: string) => {
+  return tags.length === 0
+    ? []
+    : tags.split(' ').map((tag) => (tag.startsWith('#') ? tag : `#${tag}`));
 };
