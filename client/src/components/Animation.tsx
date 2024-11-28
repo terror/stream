@@ -295,7 +295,7 @@ export const Animation = () => {
       const hue = baseHue + (Math.random() - 0.5) * hueRange;
       const color = new THREE.Color().setHSL(hue, saturation, lightness);
       const material = new THREE.MeshStandardMaterial({
-        color: color,
+        color,
         metalness: 0.5,
         roughness: 0.5,
       });
