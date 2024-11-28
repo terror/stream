@@ -19,6 +19,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@fontsource/inter": "^4.5.15",
+    "@types/three": "^0.170.0",
     "deepmerge": "^4.3.1",
     "framer-motion": "^10.9.2",
     "katex": "^0.16.4",
@@ -30,7 +31,8 @@
     "react-syntax-highlighter": "^15.5.0",
     "rehype-katex": "^6.0.2",
     "remark-gfm": "^3.0.1",
-    "remark-math": "^5.1.1"
+    "remark-math": "^5.1.1",
+    "three": "^0.170.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
