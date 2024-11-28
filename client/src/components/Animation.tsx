@@ -324,6 +324,7 @@ export const Animation = () => {
     for (let i = 0; i < 500; i++) {
       const geometry =
         geometries[Math.floor(Math.random() * geometries.length)];
+
       const material = materials[Math.floor(Math.random() * materials.length)];
 
       const mesh = new THREE.Mesh(geometry, material);
