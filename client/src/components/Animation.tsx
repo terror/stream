@@ -34,6 +34,7 @@ export const Animation = () => {
   // Add or remove lens flares based on color mode
   useEffect(() => {
     const scene = sceneRef.current;
+
     if (!scene) return;
 
     if (colorMode === 'dark' && lensFlareLightsRef.current.length === 0) {
