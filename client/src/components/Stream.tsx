@@ -17,6 +17,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
 import { Post as PostType } from '../model/Post';
+import { Animation } from './Animation';
 import { Post } from './Post';
 import { PostForm } from './PostForm';
 
@@ -124,6 +125,7 @@ export const Stream = ({ q }: { q: string | null }) => {
 
   return (
     <Stack p='4'>
+    <Animation/>
       <Flex alignItems='center'>
         <Heading>Liam's stream</Heading>
         {user && user.isAdmin && (
