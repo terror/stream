@@ -125,7 +125,7 @@ export const Stream = ({ q }: { q: string | null }) => {
 
   return (
     <Stack p='4'>
-    <Animation/>
+      <Animation />
       <Flex alignItems='center'>
         <Heading>Liam's stream</Heading>
         {user && user.isAdmin && (
