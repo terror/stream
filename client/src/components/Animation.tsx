@@ -1,11 +1,11 @@
+import { Box, useColorMode } from '@chakra-ui/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import {
   Lensflare,
   LensflareElement,
 } from 'three/examples/jsm/objects/Lensflare.js';
-import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
-import { Box, useColorMode } from '@chakra-ui/react';
 
 export const Animation = () => {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
