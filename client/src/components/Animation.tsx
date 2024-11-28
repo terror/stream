@@ -53,8 +53,8 @@ export const Animation = () => {
     const textureLoader = new THREE.TextureLoader();
 
     Promise.all([
-      textureLoader.loadAsync('/textures/lensflare0.png'),
-      textureLoader.loadAsync('/textures/lensflare3.png'),
+      textureLoader.loadAsync('lensflare0.png'),
+      textureLoader.loadAsync('lensflare3.png'),
     ])
       .then(([textureFlare0, textureFlare3]) => {
         const addLight = (
