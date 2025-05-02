@@ -10,9 +10,9 @@ services like [X](https://x.com/), where I tend to get distracted easily.
 ## Development
 
 You'll need [docker](https://www.docker.com/),
-[cargo](https://doc.rust-lang.org/cargo/) and [npm](https://www.npmjs.com/) installed
-on your machine to spawn the various components the project needs to run
-locally.
+[cargo](https://doc.rust-lang.org/cargo/) and [npm](https://www.npmjs.com/)
+installed on your machine to spawn the various components the project needs to
+run locally.
 
 First, mount a local mongodb instance with docker:
 
@@ -38,4 +38,5 @@ environment variables need to be set.
 
 ## Prior Art
 
-This was heavily inspired by Linus Lee's [stream](https://stream.thesephist.com/).
+This was heavily inspired by Linus Lee's
+[stream](https://stream.thesephist.com/).
