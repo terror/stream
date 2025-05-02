@@ -4,10 +4,15 @@
 services like [X](https://x.com/), where I tend to get distracted easily.
 
 <div align='center'>
-  <img width='800px' src="https://github.com/user-attachments/assets/6cf9ae84-106b-46c2-9cfa-86be8c3b3e64"/>
+  <img width='800px' src="https://github.com/user-attachments/assets/a6625af5-5bc6-4bb3-8518-d78e8ecb853a"/>
 </div>
 
-### Development
+## Development
+
+You'll need [docker](https://www.docker.com/),
+[cargo](https://doc.rust-lang.org/cargo/) and [npm](https://www.npmjs.com/)
+installed on your machine to spawn the various components the project needs to
+run locally.
 
 First, mount a local mongodb instance with docker:
 
@@ -31,7 +36,7 @@ $ npm run dev
 _n.b._ Refer to `.env.dev.example` and `client/.env.dev.example` for what
 environment variables need to be set.
 
-### Prior Art
+## Prior Art
 
 This was heavily inspired by Linus Lee's
 [stream](https://stream.thesephist.com/).
