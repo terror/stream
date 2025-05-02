@@ -30,7 +30,7 @@ export const Navbar = () => {
     <Flex p='4' alignItems='center'>
       <Text fontWeight='bold'>
         <Link href='/' style={{ textDecoration: 'none' }}>
-        <Waves/>
+          <Waves />
         </Link>
       </Text>
       <HStack ml='auto'>
