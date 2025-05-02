@@ -15,6 +15,7 @@ import {
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
+import { AsteriskSquare, AudioWaveform, Waves } from 'lucide-react';
 
 import { loginUrl } from '../lib/utils';
 
@@ -26,10 +27,10 @@ export const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Flex p='4'>
+    <Flex p='4' alignItems='center'>
       <Text fontWeight='bold'>
         <Link href='/' style={{ textDecoration: 'none' }}>
-          the stream
+        <Waves/>
         </Link>
       </Text>
       <HStack ml='auto'>
