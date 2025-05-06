@@ -29,7 +29,7 @@ export const Navbar = () => {
     <Flex p='4' alignItems='center'>
       <Text fontWeight='bold'>
         <Link href='/' style={{ textDecoration: 'none' }}>
-        ~/
+          ~/
         </Link>
       </Text>
       <HStack ml='auto'>
