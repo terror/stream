@@ -8,25 +8,20 @@ import {
   Stack,
   useColorMode,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { useAuth } from '../hooks/useAuth';
+import { useDeleteModal } from '../hooks/useDeleteModal';
+import { usePostActions } from '../hooks/usePostActions';
 import { fetchClient } from '../lib/fetchClient';
 import { Post as PostType } from '../model/Post';
 import { Post } from './Post';
 import { PostForm } from './PostForm';
 
 export const Stream = ({ q }: { q: string | null }) => {
-  const toast = useToast({
-    duration: 2000,
-    position: 'bottom-right',
-  });
-
   const user = useAuth();
-
   const limit = 20;
 
   const [hasMore, setHasMore] = useState(true);
@@ -35,8 +30,19 @@ export const Stream = ({ q }: { q: string | null }) => {
 
   const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   const value = useRef<HTMLInputElement>(null);
+
+  const {
+    handleUpdate,
+    handleDeleteClick,
+    handleDeleteConfirm,
+    handleDeleteCancel,
+    handleAdd,
+    isDeleteModalOpen,
+    isDeleting,
+  } = usePostActions();
+
+  const { DeleteModal } = useDeleteModal();
 
   useEffect(() => {
     fetchClient
@@ -45,7 +51,7 @@ export const Stream = ({ q }: { q: string | null }) => {
         setPosts(data);
         if (q && value.current) handleInputChange((value.current.value = q));
       })
-      .catch((err: any) => toast({ status: 'error', title: err.toString() }));
+      .catch((err: any) => console.error(err));
   }, []);
 
   const handleInputChange = async (query: string) => {
@@ -63,43 +69,29 @@ export const Stream = ({ q }: { q: string | null }) => {
     }
   };
 
-  const handleAdd = async (data: any) => {
-    try {
-      setPosts([
-        await fetchClient.deserialize<PostType>('POST', '/posts', data),
-        ...posts,
-      ]);
-      toast({ status: 'success', title: 'Added post successfully' });
-    } catch (err: any) {
-      toast({ status: 'error', title: err.toString() });
-    }
+  const handleAddWithState = async (data: any) => {
+    const newPost = await handleAdd(data);
+    setPosts([newPost, ...posts]);
   };
 
-  const handleUpdate = async (post: PostType, data: any) => {
-    try {
-      setPosts(
-        ((update: PostType) =>
-          posts.map((p) => (p._id === update._id ? update : p)))(
-          await fetchClient.deserialize<PostType>('PUT', '/posts', {
-            _id: post._id,
-            timestamp: post.timestamp,
-            ...data,
-          })
-        )
-      );
-      toast({ status: 'success', title: 'Updated post successfully' });
-    } catch (err: any) {
-      toast({ status: 'error', title: err.toString() });
-    }
+  const handleUpdateWithState = async (post: PostType, data: any) => {
+    const updatedPost = await handleUpdate(post, data);
+    setPosts(posts.map((p) => (p._id === updatedPost._id ? updatedPost : p)));
   };
 
-  const handleDelete = async (post: PostType) => {
+  const handleDeleteWithState = async (post: PostType) => {
+    handleDeleteClick(post);
+  };
+
+  const handleDeleteConfirmWithState = async () => {
     try {
-      await fetchClient.delete(`/posts?id=${post._id}`);
-      setPosts(posts.filter((p) => p._id !== post._id));
-      toast({ status: 'success', title: 'Deleted post successfully' });
-    } catch (err: any) {
-      toast({ status: 'error', title: err.toString() });
+      const deletedPost = await handleDeleteConfirm();
+
+      if (deletedPost) {
+        setPosts(posts.filter((p) => p._id !== deletedPost._id));
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -114,8 +106,9 @@ export const Stream = ({ q }: { q: string | null }) => {
       `/posts?limit=${limit}&offset=${offset}`
     );
 
-    if (batch.length === 0) setHasMore(false);
-    else {
+    if (batch.length === 0) {
+      setHasMore(false);
+    } else {
       setPosts(posts.concat(batch));
       setOffset(offset + limit);
     }
@@ -147,7 +140,7 @@ export const Stream = ({ q }: { q: string | null }) => {
               +
             </IconButton>
             <PostForm
-              context={{ type: 'add', handler: handleAdd }}
+              context={{ type: 'add', handler: handleAddWithState }}
               isOpen={isOpen}
               onClose={onClose}
             />
@@ -169,14 +162,20 @@ export const Stream = ({ q }: { q: string | null }) => {
           {posts.map((post, i) => (
             <Post
               key={i}
-              onDelete={handleDelete}
+              onDelete={handleDeleteWithState}
               onTagClick={handleTagClick}
-              onUpdate={handleUpdate}
+              onUpdate={handleUpdateWithState}
               post={post}
             />
           ))}
         </InfiniteScroll>
       )}
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onCancel={handleDeleteCancel}
+        onConfirm={handleDeleteConfirmWithState}
+        isDeleting={isDeleting}
+      />
     </Stack>
   );
 };

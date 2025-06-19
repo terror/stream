@@ -6,6 +6,7 @@ export const fetchClient = {
   get: async (endpoint: string, init?: RequestInit) => {
     return fetch(prefix + endpoint, init);
   },
+
   post: async (endpoint: string, data: any, init?: RequestInit) => {
     return fetch(prefix + endpoint, {
       method: 'POST',
@@ -16,6 +17,7 @@ export const fetchClient = {
       ...init,
     });
   },
+
   put: async (endpoint: string, data: any, init?: RequestInit) => {
     return fetch(prefix + endpoint, {
       method: 'PUT',
@@ -26,12 +28,14 @@ export const fetchClient = {
       ...init,
     });
   },
+
   delete: async (endpoint: string, init?: RequestInit) => {
     return fetch(prefix + endpoint, {
       method: 'DELETE',
       ...init,
     });
   },
+
   async deserialize<T>(
     method: Method,
     endpoint: string,

@@ -115,7 +115,7 @@ export const Post = ({
   onUpdate,
   post,
 }: {
-  onDelete?: (post: PostType) => Promise<void>;
+  onDelete?: (post: PostType) => void;
   onTagClick?: (tag: string) => void;
   onUpdate: (post: PostType, data: any) => Promise<void>;
   post: PostType;
@@ -126,7 +126,7 @@ export const Post = ({
 
   const handleDelete = async () => {
     try {
-      if (onDelete) await onDelete(post);
+      if (onDelete) onDelete(post);
     } catch (err) {
       console.error(err);
     }
