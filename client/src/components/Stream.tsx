@@ -2,7 +2,6 @@ import { AddIcon } from '@chakra-ui/icons';
 import {
   Center,
   Flex,
-  Heading,
   IconButton,
   Input,
   Spinner,
@@ -17,7 +16,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAuth } from '../hooks/useAuth';
 import { fetchClient } from '../lib/fetchClient';
 import { Post as PostType } from '../model/Post';
-import { Animation } from './Animation';
 import { Post } from './Post';
 import { PostForm } from './PostForm';
 
@@ -125,17 +123,24 @@ export const Stream = ({ q }: { q: string | null }) => {
 
   return (
     <Stack p='4'>
-      <Animation />
       <Flex alignItems='center'>
-        <Heading>Liam's stream</Heading>
+        <Input
+          placeholder='Search the stream...'
+          fontWeight='medium'
+          background={colorMode === 'light' ? '#DEE3EB' : '#1A1A1A'}
+          border='none'
+          outline='none'
+          _focus={{ boxShadow: 'none' }}
+          ref={value}
+          onChange={(e) => handleInputChange(e.target.value)}
+        />
         {user && user.isAdmin && (
           <Fragment>
             <IconButton
               aria-label='add'
               background='transparent'
               icon={<AddIcon />}
-              ml='2'
-              mt='2'
+              _hover={{ background: 'transparent' }}
               onClick={onOpen}
               size='sm'
             >
@@ -149,16 +154,6 @@ export const Stream = ({ q }: { q: string | null }) => {
           </Fragment>
         )}
       </Flex>
-      <Input
-        placeholder='Search the stream...'
-        fontWeight='medium'
-        background={colorMode === 'light' ? '#DEE3EB' : '#1A1A1A'}
-        border='none'
-        outline='none'
-        _focus={{ boxShadow: 'none' }}
-        ref={value}
-        onChange={(e) => handleInputChange(e.target.value)}
-      />
       {posts.length !== 0 && (
         <InfiniteScroll
           dataLength={posts.length}

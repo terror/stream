@@ -1,4 +1,4 @@
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
   Flex,
   HStack,
@@ -15,10 +15,13 @@ import {
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 import { loginUrl } from '../lib/utils';
 
-export const Navbar = () => {
+export const Navbar = ({ back }: { back?: boolean }) => {
+  const navigate = useNavigate();
+
   const { toggleColorMode } = useColorMode();
 
   const { colorMode } = useColorMode();
@@ -27,11 +30,7 @@ export const Navbar = () => {
 
   return (
     <Flex p='4' alignItems='center'>
-      <Text fontWeight='bold'>
-        <Link href='/' style={{ textDecoration: 'none' }}>
-          ~/
-        </Link>
-      </Text>
+      {back && <ArrowBackIcon cursor='pointer' onClick={() => navigate('/')} />}
       <HStack ml='auto'>
         <IconButton
           aria-label='Toggle color mode'

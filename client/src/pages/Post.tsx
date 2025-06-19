@@ -28,7 +28,7 @@ export const Post = () => {
 
   if (post === undefined) {
     return (
-      <Layout>
+      <Layout back>
         <Center mt='4'>
           <Spinner />
         </Center>
@@ -60,13 +60,14 @@ export const Post = () => {
       await fetchClient.delete(`/posts?id=${model._id}`);
       setPost(null);
       toast({ status: 'success', title: 'Deleted post successfully' });
+      navigate('/');
     } catch (err: any) {
       toast({ status: 'error', title: err.toString() });
     }
   };
 
   return (
-    <Layout>
+    <Layout back>
       <Stack p='4'>
         {post && (
           <PostComponent
