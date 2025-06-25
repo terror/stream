@@ -59,7 +59,9 @@ export const defaults: Defaults = {
   blockquote: (props) => {
     return (
       <Box borderLeft='4px' borderColor='gray.300' pl={2} lineHeight='lg'>
-        <Text fontWeight='medium'>{props.children}</Text>
+        <Text color={'gray'} fontStyle='italic' fontWeight='medium'>
+          {props.children}
+        </Text>
       </Box>
     );
   },
