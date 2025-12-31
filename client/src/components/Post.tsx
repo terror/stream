@@ -6,7 +6,6 @@ import {
   Link,
   SimpleGrid,
   Stack,
-  StackItem,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -34,7 +33,7 @@ const PostControls = ({
   post: PostType;
 }) => {
   return (
-    <StackItem alignSelf='end'>
+    <Box alignSelf='end'>
       <IconButton
         aria-label='edit'
         background='transparent'
@@ -55,7 +54,7 @@ const PostControls = ({
         isOpen={isOpen}
         onClose={onClose}
       />
-    </StackItem>
+    </Box>
   );
 };
 
@@ -134,9 +133,9 @@ export const Post = ({
 
   return (
     <Stack>
-      <StackItem>
+      <Box>
         <PostData post={post} onTagClick={onTagClick} />
-      </StackItem>
+      </Box>
       {user && user.isAdmin && (
         <PostControls
           onOpen={onOpen}
