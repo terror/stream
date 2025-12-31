@@ -46,7 +46,7 @@ impl Server {
           .put(posts::update_post)
           .delete(posts::delete_post),
       )
-      .route("/api/posts/:id", get(posts::get_post))
+      .route("/api/posts/{id}", get(posts::get_post))
       .route("/api/search", get(search::search))
       .route("/api/user", get(user::get_user));
 

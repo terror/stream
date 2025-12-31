@@ -2,6 +2,14 @@ use super::*;
 
 pub(crate) static COOKIE_NAME: &str = "session";
 
+pub(crate) type OAuthClient = BasicClient<
+  EndpointSet,
+  EndpointNotSet,
+  EndpointNotSet,
+  EndpointNotSet,
+  EndpointSet,
+>;
+
 pub(crate) struct AuthRedirect;
 
 impl IntoResponse for AuthRedirect {
@@ -44,17 +52,19 @@ pub(crate) async fn authorized(
 ) -> Result<impl IntoResponse> {
   debug!("Fetching token from oauth client...");
 
+  let client_id = state.oauth_client.client_id().to_string();
+
+  let redirect_uri = state
+    .oauth_client
+    .redirect_uri()
+    .expect("Missing redirect url")
+    .to_string();
+
   let params = [
-    ("client_id", &state.oauth_client.client_id().to_string()),
+    ("client_id", client_id.as_str()),
     ("client_secret", &state.client_secret),
     ("code", &query.code),
-    (
-      "redirect_uri",
-      state
-        .oauth_client
-        .redirect_url()
-        .expect("Missing redirect url"),
-    ),
+    ("redirect_uri", redirect_uri.as_str()),
   ];
 
   let response = state

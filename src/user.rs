@@ -39,7 +39,6 @@ pub(crate) async fn get_user(
   }
 }
 
-#[async_trait]
 impl<S> FromRequestParts<S> for User
 where
   MongodbSessionStore: FromRef<S>,
@@ -53,31 +52,68 @@ where
   ) -> Result<Self, Self::Rejection> {
     let session_store = MongodbSessionStore::from_ref(state);
 
-    let cookies =
-      parts.extract::<TypedHeader<Cookie>>().await.map_err(|e| {
-        match *e.name() {
-          header::COOKIE => match e.reason() {
-            TypedHeaderRejectionReason::Missing => AuthRedirect,
-            _ => {
-              log::error!("Unexpected error getting cookie header(s): {}", e);
-              AuthRedirect
-            }
-          },
+    let cookies = parts.extract::<TypedHeader<Cookie>>().await.map_err(
+      |error| match *error.name() {
+        header::COOKIE => match error.reason() {
+          TypedHeaderRejectionReason::Missing => AuthRedirect,
           _ => {
-            log::error!("Unexpected error getting cookies: {}", e);
+            log::error!("Unexpected error getting cookie header(s): {error}");
             AuthRedirect
           }
+        },
+        _ => {
+          log::error!("Unexpected error getting cookies: {error}");
+          AuthRedirect
         }
-      })?;
+      },
+    )?;
 
-    Ok(
-      session_store
-        .load_session(cookies.get(COOKIE_NAME).ok_or(AuthRedirect)?.to_owned())
-        .await
-        .unwrap()
-        .ok_or(AuthRedirect)?
-        .get::<User>("user")
-        .ok_or(AuthRedirect)?,
-    )
+    let session = session_store
+      .load_session(cookies.get(COOKIE_NAME).ok_or(AuthRedirect)?.to_owned())
+      .await
+      .unwrap()
+      .ok_or(AuthRedirect)?;
+
+    Ok(session.get::<User>("user").ok_or(AuthRedirect)?)
+  }
+}
+
+impl<S> OptionalFromRequestParts<S> for User
+where
+  MongodbSessionStore: FromRef<S>,
+  S: Send + Sync,
+{
+  type Rejection = AuthRedirect;
+
+  async fn from_request_parts(
+    parts: &mut Parts,
+    state: &S,
+  ) -> Result<Option<Self>, Self::Rejection> {
+    let session_store = MongodbSessionStore::from_ref(state);
+
+    let cookies = match parts.extract::<Option<TypedHeader<Cookie>>>().await {
+      Ok(Some(TypedHeader(cookies))) => cookies,
+      Ok(None) => return Ok(None),
+      Err(error) => {
+        log::error!("Unexpected error getting cookie header(s): {error}");
+        return Err(AuthRedirect);
+      }
+    };
+
+    let cookie = match cookies.get(COOKIE_NAME) {
+      Some(cookie) => cookie,
+      None => return Ok(None),
+    };
+
+    let session = match session_store.load_session(cookie.to_owned()).await {
+      Ok(Some(session)) => session,
+      Ok(None) => return Ok(None),
+      Err(error) => {
+        log::error!("Unexpected error loading session: {error}");
+        return Err(AuthRedirect);
+      }
+    };
+
+    Ok(session.get::<User>("user"))
   }
 }

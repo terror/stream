@@ -5,7 +5,7 @@ pub(crate) struct State {
   pub(crate) client_url: String,
   pub(crate) client_secret: String,
   pub(crate) db: Arc<Db>,
-  pub(crate) oauth_client: BasicClient,
+  pub(crate) oauth_client: OAuthClient,
   pub(crate) request_client: reqwest::Client,
   pub(crate) session_store: MongodbSessionStore,
 }
@@ -15,7 +15,7 @@ impl FromRef<State> for Arc<Db> {
     state.db.clone()
   }
 }
-impl FromRef<State> for BasicClient {
+impl FromRef<State> for OAuthClient {
   fn from_ref(state: &State) -> Self {
     state.oauth_client.clone()
   }
@@ -37,21 +37,19 @@ impl State {
         .unwrap_or_else(|_| "http://127.0.0.1:5173".into()),
       client_secret: client_secret.clone(),
       db: db.clone(),
-      oauth_client: BasicClient::new(
-        ClientId::new(
-          env::var("GITHUB_CLIENT_ID")
-            .expect("Missing GITHUB_CLIENT_ID environment variable."),
-        ),
-        Some(ClientSecret::new(client_secret)),
-        AuthUrl::new(env::var("AUTH_URL").unwrap_or_else(|_| {
-          "https://github.com/login/oauth/authorize".into()
-        }))?,
-        Some(
-          TokenUrl::new(env::var("TOKEN_URL").unwrap_or_else(|_| {
-            "https://github.com/login/oauth/access_token".into()
-          }))
-          .expect("Invalid token url."),
-        ),
+      oauth_client: BasicClient::new(ClientId::new(
+        env::var("GITHUB_CLIENT_ID")
+          .expect("Missing GITHUB_CLIENT_ID environment variable."),
+      ))
+      .set_client_secret(ClientSecret::new(client_secret))
+      .set_auth_uri(AuthUrl::new(env::var("AUTH_URL").unwrap_or_else(|_| {
+        "https://github.com/login/oauth/authorize".into()
+      }))?)
+      .set_token_uri(
+        TokenUrl::new(env::var("TOKEN_URL").unwrap_or_else(|_| {
+          "https://github.com/login/oauth/access_token".into()
+        }))
+        .expect("Invalid token url."),
       )
       .set_auth_type(AuthType::RequestBody)
       .set_redirect_uri(
