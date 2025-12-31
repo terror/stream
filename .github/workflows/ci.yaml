@@ -34,10 +34,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: npm/action-setup@v3
-        with:
-          version: 9.0.6
-
       - name: Info
         run: |
           node --version
@@ -64,10 +60,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: npm/action-setup@v3
-        with:
-          version: 9.0.6
 
       - name: Install dependencies
         run: npm i --frozen-lockfile
