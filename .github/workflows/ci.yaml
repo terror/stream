@@ -13,13 +13,8 @@ defaults:
     shell: bash
 
 jobs:
-  all:
-    name: All
-
-    runs-on: macos-latest
-
-    env:
-      RUSTFLAGS: --deny warnings
+  check-workflow:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -33,6 +28,95 @@ jobs:
       - name: Check workflow
         run: ${{ steps.actionlint.outputs.executable }} -color
 
+  client:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: npm/action-setup@v3
+        with:
+          version: 9.0.6
+
+      - name: Info
+        run: |
+          node --version
+          npm --version
+
+      - name: Install dependencies
+        run: npm i --frozen-lockfile
+
+      - name: Build
+        run: npm run build
+
+      - name: Format
+        run: npm run format-check
+
+      - name: Lint
+        run: npm run lint
+
+  coverage:
+    runs-on: macos-latest
+
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      RUSTFLAGS: --deny warnings
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: npm/action-setup@v3
+        with:
+          version: 9.0.6
+
+      - name: Install dependencies
+        run: npm i --frozen-lockfile
+
+      - name: Install toolchain
+        id: toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-musl
+          components: llvm-tools-preview
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Info
+        run: |
+          cargo --version
+          node --version
+          npm --version
+          rustup --version
+
+      - name: Install mongodb
+        run: |
+          brew tap mongodb/brew
+          brew install mongodb-community@7.0
+          echo -e 'replication:\n  replSetName: rs0' >> /opt/homebrew/etc/mongod.conf
+          brew services start mongodb-community@7.0
+          mongosh --eval 'rs.initiate()'
+
+      - name: Install grcov
+        run: cargo install grcov
+
+      - name: Run coverage script
+        run: ./bin/coverage release
+
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage/*.lcov
+
+  server:
+    runs-on: macos-latest
+
+    env:
+      RUSTFLAGS: --deny warnings
+
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Install rust toolchain components
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -41,14 +125,13 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Install client dependencies
-        run: npm ci
-
       - name: Install mongodb
         run: |
           brew tap mongodb/brew
-          brew install mongodb-community@6.0
-          brew services start mongodb-community@6.0
+          brew install mongodb-community@7.0
+          echo -e 'replication:\n  replSetName: rs0' >> /opt/homebrew/etc/mongod.conf
+          brew services start mongodb-community@7.0
+          mongosh --eval 'rs.initiate()'
 
       - name: Info
         run: |
@@ -61,23 +144,20 @@ jobs:
           brew install ripgrep
           ./bin/forbid
 
+      - name: Unused dependencies
+        uses: bnjbvr/cargo-machete@main
+
       - name: Build
         run: cargo build --workspace --all-features --all-targets
 
-      - name: Clippy
-        run: ./bin/clippy
-
-      - name: Check lockfile
+      - name: Lockfile
         run: cargo update --locked --package stream
 
-      - name: Check rust formatting
+      - name: Lint
+        run: ./bin/clippy
+
+      - name: Format
         run: cargo fmt --all -- --check
-
-      - name: Lint typescript code
-        run: npm run lint
-
-      - name: Check typescript formatting
-        run: npm run format-check
 
       - name: Test
         run: cargo test --workspace --all-features --all-targets
