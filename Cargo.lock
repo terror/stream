@@ -2616,7 +2616,6 @@ dependencies = [
  "pretty_assertions",
  "reqwest",
  "serde",
- "serde_json",
  "tokio",
  "tower-http",
  "uuid",
