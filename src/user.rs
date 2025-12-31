@@ -74,7 +74,7 @@ where
       .unwrap()
       .ok_or(AuthRedirect)?;
 
-    Ok(session.get::<User>("user").ok_or(AuthRedirect)?)
+    session.get::<User>("user").ok_or(AuthRedirect)
   }
 }
 
