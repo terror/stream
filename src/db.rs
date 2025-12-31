@@ -24,7 +24,7 @@ impl Db {
 
     client
       .database(db_name)
-      .run_command(doc! {"ping": 1}, None)
+      .run_command(doc! {"ping": 1})
       .await?;
 
     info!("Connected to MongoDB.");
@@ -66,7 +66,7 @@ impl Db {
       self
         .database
         .collection::<Post>(Db::POST_COLLECTION)
-        .insert_one(post, None)
+        .insert_one(post)
         .await?,
     )
   }
@@ -86,7 +86,6 @@ impl Db {
               "tags": post.tags
             }
           }),
-          None,
         )
         .await?,
     )
@@ -97,7 +96,7 @@ impl Db {
       self
         .database
         .collection::<Post>(Db::POST_COLLECTION)
-        .find_one(doc! { "_id": id }, None)
+        .find_one(doc! { "_id": id })
         .await?,
     )
   }
@@ -107,12 +106,7 @@ impl Db {
       self
         .database
         .collection::<Post>(Db::POST_COLLECTION)
-        .delete_one(
-          doc! {
-            "_id": id
-          },
-          None,
-        )
+        .delete_one(doc! { "_id": id })
         .await?,
     )
   }
@@ -125,12 +119,8 @@ impl Db {
         self
           .database
           .collection::<Post>(Db::POST_COLLECTION)
-          .find(
-            doc! { "tags" : { "$in": vec![query] } },
-            FindOptions::builder()
-              .sort(doc! { "timestamp": -1 })
-              .build(),
-          )
+          .find(doc! { "tags" : { "$in": vec![query] } })
+          .sort(doc! { "timestamp": -1 })
           .await?
           .try_collect::<Vec<Post>>()
           .await?,
@@ -141,12 +131,8 @@ impl Db {
       self
         .database
         .collection::<Post>(Db::POST_COLLECTION)
-        .find(
-          doc! { "$text" : { "$search": query } },
-          FindOptions::builder()
-            .sort(doc! { "score": { "$meta" : "textScore" }})
-            .build(),
-        )
+        .find(doc! { "$text" : { "$search": query } })
+        .sort(doc! { "score": { "$meta" : "textScore" }})
         .await?
         .try_collect::<Vec<Post>>()
         .await?,
@@ -165,22 +151,19 @@ impl Db {
     limit: Option<i64>,
     offset: Option<u64>,
   ) -> Result<Vec<Post>> {
-    Ok(
-      self
-        .database
-        .collection::<Post>(Db::POST_COLLECTION)
-        .find(
-          None,
-          FindOptions::builder()
-            .skip(offset)
-            .limit(limit)
-            .sort(doc! { "timestamp": -1 })
-            .build(),
-        )
-        .await?
-        .try_collect::<Vec<Post>>()
-        .await?,
-    )
+    let collection = self.database.collection::<Post>(Db::POST_COLLECTION);
+
+    let mut find = collection.find(doc! {}).sort(doc! { "timestamp": -1 });
+
+    if let Some(offset) = offset {
+      find = find.skip(offset);
+    }
+
+    if let Some(limit) = limit {
+      find = find.limit(limit);
+    }
+
+    Ok(find.await?.try_collect::<Vec<Post>>().await?)
   }
 
   async fn add_user(&self, user: User) -> Result<StoredUser> {
@@ -207,7 +190,7 @@ impl Db {
     self
       .database
       .collection::<StoredUser>(Db::USER_COLLECTION)
-      .insert_one(&user, None)
+      .insert_one(&user)
       .await?;
 
     match self.find_user(&user.login).await? {
@@ -221,7 +204,7 @@ impl Db {
       self
         .database
         .collection::<StoredUser>(Db::USER_COLLECTION)
-        .find_one(doc! { "login": login }, None)
+        .find_one(doc! { "login": login })
         .await?,
     )
   }
@@ -240,7 +223,6 @@ impl Db {
             .keys(keys)
             .options(IndexOptions::builder().weights(weights).build())
             .build(),
-          None,
         )
         .await?,
     )

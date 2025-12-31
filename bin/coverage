@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euox pipefail
+
+export RUSTFLAGS="-Cinstrument-coverage"
+
+MODE=${1:-"debug"}
+
+rm -rf coverage && mkdir coverage
+
+echo '[~] Running server coverage...'
+
+CARGO_INCREMENTAL=0 \
+  RUSTFLAGS='-Cinstrument-coverage' \
+  LLVM_PROFILE_FILE='cargo-test-%p-%m.profraw' \
+  cargo test --all --all-targets
+
+echo '[~] Generating server coverage report...'
+
+if [ "$MODE" = "debug" ]; then
+  FMT=html
+  SERVER_FILE=coverage/server.html
+else
+  FMT=lcov
+  SERVER_FILE=coverage/server.lcov
+fi
+
+grcov . \
+  --binary-path ./target/debug/deps \
+  -s . \
+  -t $FMT \
+  --branch \
+  --ignore-not-existing \
+  --ignore "../*" \
+  --ignore "/*" \
+  -o $SERVER_FILE
+
+echo '[~] Combining coverage reports...'
+
+if [ "$MODE" = "debug" ]; then
+  echo "Server coverage: coverage/server.html"
+else
+  cat $SERVER_FILE > coverage/tests.lcov
+fi
+
+echo '[~] Cleaning up...'
+
+find . -type f -name "*.profraw" -exec rm {} \;

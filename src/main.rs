@@ -2,7 +2,7 @@ use {
   crate::{
     arguments::Arguments,
     assets::Assets,
-    auth::{AuthRedirect, COOKIE_NAME},
+    auth::{AuthRedirect, OAuthClient, COOKIE_NAME},
     db::Db,
     error::Error,
     post::Post,
@@ -13,17 +13,19 @@ use {
   },
   anyhow::anyhow,
   async_mongodb_session::MongodbSessionStore,
-  async_session::{async_trait, Session, SessionStore},
+  async_session::{Session, SessionStore},
   axum::{
     extract::{
-      rejection::TypedHeaderRejectionReason, FromRef, FromRequestParts, Path,
-      Query, State as AppState,
+      FromRef, FromRequestParts, OptionalFromRequestParts, Path, Query,
+      State as AppState,
     },
-    headers::Cookie,
-    response::{IntoResponse, Redirect, Response, TypedHeader},
+    response::{IntoResponse, Redirect, Response},
     routing::Router,
     routing::{get, post},
     Json, RequestPartsExt,
+  },
+  axum_extra::{
+    headers::Cookie, typed_header::TypedHeaderRejectionReason, TypedHeader,
   },
   chrono::prelude::*,
   clap::Parser,
@@ -37,13 +39,13 @@ use {
   log::{debug, error, info},
   mongodb::{
     bson::{doc, Document},
-    options::{ClientOptions, FindOptions, IndexOptions, UpdateModifications},
+    options::{ClientOptions, IndexOptions, UpdateModifications},
     results::{CreateIndexResult, DeleteResult, InsertOneResult, UpdateResult},
     Client, Database, IndexModel,
   },
   oauth2::{
     basic::BasicClient, AuthType, AuthUrl, ClientId, ClientSecret, CsrfToken,
-    RedirectUrl, TokenUrl,
+    EndpointNotSet, EndpointSet, RedirectUrl, TokenUrl,
   },
   serde::{Deserialize, Serialize},
   std::{
