@@ -1,5 +1,7 @@
 ## stream
 
+[![build](https://img.shields.io/github/actions/workflow/status/terror/stream/ci.yaml?branch=master&style=flat&labelColor=1d1d1d&color=424242&logo=GitHub%20Actions&logoColor=white&label=build)](https://github.com/terror/stream/actions/workflows/ci.yaml)
+
 **stream** is a lightweight personal micro-blogging platform I use in favour of
 services like [X](https://x.com/), where I tend to get distracted easily.
 
