@@ -166,6 +166,7 @@ export const Stream = ({ q }: { q: string | null }) => {
               onTagClick={handleTagClick}
               onUpdate={handleUpdateWithState}
               post={post}
+              truncate
             />
           ))}
         </InfiniteScroll>

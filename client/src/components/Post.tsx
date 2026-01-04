@@ -58,13 +58,33 @@ const PostControls = ({
   );
 };
 
+const WORD_THRESHOLD = 500;
+
+const getWordCount = (text: string) =>
+  text.split(/\s+/).filter((word) => word.length > 0).length;
+
+const truncateToWords = (text: string, maxWords: number) => {
+  const words = text.split(/\s+/);
+  return words.slice(0, maxWords).join(' ');
+};
+
 const PostData = ({
   post,
   onTagClick,
+  truncate = false,
 }: {
   post: PostType;
   onTagClick?: (tag: string) => void;
+  truncate?: boolean;
 }) => {
+  const wordCount = getWordCount(post.content);
+
+  const shouldTruncate = truncate && wordCount > WORD_THRESHOLD;
+
+  const displayContent = shouldTruncate
+    ? truncateToWords(post.content, WORD_THRESHOLD)
+    : post.content;
+
   return (
     <SimpleGrid columns={[1, null, 4]} key={post.timestamp} mb='4'>
       <Box mt='0.5' mb='2'>
@@ -80,7 +100,14 @@ const PostData = ({
       </Box>
       <Stack gridColumn='span 3'>
         {post.title && <Text fontWeight='bold'>{post.title}</Text>}
-        <Markdown content={post.content} />
+        <Markdown content={displayContent} />
+        {shouldTruncate && (
+          <RouterLink to={`/posts/${post._id}`}>
+            <Text fontSize='sm' color='gray.500'>
+              [...{wordCount.toLocaleString()} words]
+            </Text>
+          </RouterLink>
+        )}
         <HStack>
           {post.tags.map(
             (tag, i) =>
@@ -113,11 +140,13 @@ export const Post = ({
   onTagClick,
   onUpdate,
   post,
+  truncate = false,
 }: {
   onDelete?: (post: PostType) => void;
   onTagClick?: (tag: string) => void;
   onUpdate: (post: PostType, data: any) => Promise<void>;
   post: PostType;
+  truncate?: boolean;
 }) => {
   const user = useAuth();
 
@@ -134,7 +163,7 @@ export const Post = ({
   return (
     <Stack>
       <Box>
-        <PostData post={post} onTagClick={onTagClick} />
+        <PostData post={post} onTagClick={onTagClick} truncate={truncate} />
       </Box>
       {user && user.isAdmin && (
         <PostControls
